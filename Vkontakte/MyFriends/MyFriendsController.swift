@@ -18,7 +18,7 @@ class MyFriendsController: UIViewController {
     private lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.tintColor = .lightGray
-        refreshControl.attributedTitle = NSAttributedString(string: "", attributes: [.font: UIFont.systemFont(ofSize: 12)])
+//        refreshControl.attributedTitle = NSAttributedString(string: "", attributes: [.font: UIFont.systemFont(ofSize: 12)])
         refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
         return refreshControl
     }()
@@ -54,6 +54,8 @@ class MyFriendsController: UIViewController {
         }
         return self.dataUser
     }
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -224,20 +226,9 @@ extension MyFriendsController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: self.myFriendsCellIdentifier, for: indexPath) as? MyFriendsCell else {return UITableViewCell()}
-        let data = self.dataUserFiltered[indexPath.section].names[indexPath.row]
-        let name = data.firstLastName
-        let stringURL = data.avatar
-        cell.friendAvatarView.image = nil
-        cell.tag = indexPath.row
-        cell.friendNameLabel?.text = name
-        DispatchQueue.global().async {
-            let avatar: Data = NetworkManager.shared.getUserImageData(stringURL: stringURL)
-            DispatchQueue.main.async {
-                if cell.tag == indexPath.row{
-                    cell.friendAvatarView?.image = UIImage(data: avatar)
-                }
-            }
-        }
+        
+        cell.setupCell(data: self.dataUserFiltered, cell: cell, indexPath: indexPath)
+
         return cell
     }
     

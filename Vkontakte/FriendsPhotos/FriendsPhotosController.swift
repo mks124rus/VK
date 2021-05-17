@@ -134,17 +134,15 @@ class FriendsPhotosController: UIViewController{
     
 // default.realm создание связи между другом и его фотографиями
     private func addRelationships(){
-
         guard let photoResults = self.photoResults else {return}
         guard self.userResults != nil else {return}
-
         for photo in photoResults {
             let photoInRealm = userResults?.first?.photos.contains(photo)
             if photoInRealm == false{
                 do{
-                    userResults?.realm?.beginWrite()
-                    userResults?.first?.photos.append(photo)
-                    try userResults?.realm?.commitWrite()
+                    self.userResults?.realm?.beginWrite()
+                    self.userResults?.first?.photos.append(photo)
+                    try self.userResults?.realm?.commitWrite()
                 }
                 catch {
                     print(error)
@@ -179,7 +177,7 @@ extension FriendsPhotosController: UICollectionViewDelegate {
         guard let photoResults = self.photoResults else {return}
         let stringURL = photoResults[indexPath.item].url
         DispatchQueue.global().async {
-            let data: Data = self.networkManager.getUserImageData(stringURL: stringURL)
+            let data: Data = self.networkManager.getImageData(stringURL: stringURL)
             DispatchQueue.main.async {
                 let pressedImage = UIImage(data: data)
                 self.currentPhoto = indexPath.item
@@ -224,26 +222,7 @@ extension FriendsPhotosController: UICollectionViewDataSource {
         //        let data = self.dataPhoto[indexPath.item]
         guard  let photoResults = self.photoResults else { return UICollectionViewCell()}
         let data = photoResults[indexPath.item]
-        let stringURL = data.url
-        cell.likeConrolView.labelLikeCount.text = nil
-        cell.likeConrolView.isHidden = true
-        cell.likeConrolView.heartButtonOnBar.isHidden = true
-        cell.photo.image = nil
-        cell.tag = indexPath.item
-        
-        DispatchQueue.global().async {
-            let imageData: Data = NetworkManager.shared.getUserImageData(stringURL: stringURL)
-            DispatchQueue.main.async {
-                if cell.tag == indexPath.item{
-                cell.photo.image = UIImage(data: imageData)
-                cell.likeConrolView.isHidden = false
-                cell.likeConrolView.heartButtonOnBar.isHidden = false
-                cell.likeConrolView.labelLikeCount.text = String(data.likeCount)
-                cell.likeConrolView.likeCount = data.likeCount
-                cell.likeConrolView.userLikeCount = data.likeCount
-                }
-            }
-        }
+        cell.setupCell(data: data, cell: cell, indexPath: indexPath)
         return cell
     }
 }
@@ -267,7 +246,7 @@ extension FriendsPhotosController {
     private func swipeLeftAnimationPreviewPhoto(){
         guard let photoResults = self.photoResults else {return}
         let currentStringURL = photoResults.map{$0.url}[self.currentPhoto]
-        let dataImage: Data = self.networkManager.getUserImageData(stringURL: currentStringURL)
+        let dataImage: Data = self.networkManager.getImageData(stringURL: currentStringURL)
         let image = UIImage(data: dataImage)
         
         UIView.animate(withDuration: 0.75,
@@ -306,7 +285,7 @@ extension FriendsPhotosController {
     private func swipeRightAnimationPreviewPhoto(){
         guard let photoResults = self.photoResults else {return}
         let currentStringURL = photoResults.map{$0.url}[self.currentPhoto]
-        let dataImage: Data = self.networkManager.getUserImageData(stringURL: currentStringURL)
+        let dataImage: Data = self.networkManager.getImageData(stringURL: currentStringURL)
         let image = UIImage(data: dataImage)
         
         UIView.animate(withDuration: 0.75,
@@ -603,7 +582,7 @@ extension FriendsPhotosController{
         let stringURL = photoResults[self.currentPhoto].url
         
         DispatchQueue.global().async{
-            let imageData: Data = NetworkManager.shared.getUserImageData(stringURL: stringURL)
+            let imageData: Data = NetworkManager.shared.getImageData(stringURL: stringURL)
             DispatchQueue.main.async {
                 let image = UIImage(data: imageData)
                 if let swipeGesture = gesture as? UISwipeGestureRecognizer {

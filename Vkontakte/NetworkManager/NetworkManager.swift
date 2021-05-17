@@ -24,6 +24,7 @@ class NetworkManager {
     var token: String?
     var userId: Int?
     
+    //аватар друга
     func loadFriendsAvatar(token: String) {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
@@ -49,8 +50,8 @@ class NetworkManager {
         }
         dataTask.resume()
     }
-    
-    func getUserImageData(stringURL: String) -> Data {
+    //получаем данные из url
+    func getImageData(stringURL: String) -> Data {
 //        let imageCache = ImageCache.instance
 //        if imageCache.cache[stringURL] != nil {
 //            return imageCache.cache[stringURL] ?? Data()
@@ -61,6 +62,57 @@ class NetworkManager {
         return imageData
     }
     
+    //новости
+    func loadNewsFeed(token: String, completion: ((Result<[News], Error>) -> Void)? = nil){
+        DispatchQueue.global(qos: .utility).async {
+            let baseURL = "https://api.vk.com"
+            let path = "/method/newsfeed.get"
+            
+            let params: Parameters = [
+                "access_token": token,
+                "max_photos": "1",
+                "filters": "post, photo",
+                "return_banned" : "0",
+                "count" : "50",
+                "v" : "5.130"
+            ]
+            
+            AF.request(baseURL + path, method: .get, parameters: params).responseJSON { (response) in
+                switch response.result {
+                case .success(let data):
+                    let json = JSON(data)
+                    let newsJSON = json["response","items"].arrayValue
+                    let usersJSON = json["response","profiles"].arrayValue
+                    let groupsJSON = json["response", "groups"].arrayValue
+                    let news = newsJSON.map {News(from: $0) }
+                    let user = usersJSON.map {User(from: $0) }
+                    let group = groupsJSON.map {Group(from: $0)}
+
+                    for post in news{
+                        if post.sourceID > 0 {
+                            let index = user.firstIndex(where: {item -> Bool in
+                                item.id == post.sourceID
+                            })
+                            post.name = "\(user[index ?? 0].firstLastName)"
+                            post.avatar = "\(user[index ?? 0].avatar)"
+                        } else {
+                            let index = group.firstIndex(where: {item -> Bool in
+                                item.id == post.sourceID * -1
+                            })
+                            post.name = "\(group[index ?? 0].name)"
+                            post.avatar = "\(group[index ?? 0].avatar)"
+                        }
+                    }
+                    
+                    completion?(.success(news))
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    completion?(.failure(error))
+                }
+            }
+        }
+    }
+    //фото друзей
     func loadFriendPhotos(userID: String, completion: ((Result<[Photo], Error>) -> Void)? = nil){
         let baseURL = "https://api.vk.com"
         let path = "/method/photos.getAll"
@@ -88,7 +140,7 @@ class NetworkManager {
             }
         }
     }
-    
+    //список друзей
     func loadFriends(completion: ((Result<[User], Error>) -> Void)? = nil){
         let baseURL = "https://api.vk.com"
         let path = "/method/friends.get"
@@ -113,7 +165,7 @@ class NetworkManager {
             }
         }
     }
-    
+    //список групп
     func loadGroups(completion: ((Result<[Group], Error>) -> Void)? = nil){
         let baseURL = "https://api.vk.com"
         let path = "/method/groups.get"
@@ -136,13 +188,4 @@ class NetworkManager {
             }
         }
     }
-}
-
-class ImageCache {
-    static let instance = ImageCache()
-    private init(){
-        
-    }
-    
-    var cache: [String: Data] = [:]
 }

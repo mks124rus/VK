@@ -119,19 +119,8 @@ extension MyGroupsViewController: UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? MyGroupsTableViewCell else {return UITableViewCell()}
-        cell.myGroupsLogoView.image = nil
-        cell.tag = indexPath.row
         guard let data = groupResults?[indexPath.row] else {return UITableViewCell()}
-        let stringURL = data.avatar
-        DispatchQueue.global().async {
-            let avatar: Data = NetworkManager.shared.getUserImageData(stringURL: stringURL)
-            DispatchQueue.main.async {
-                if cell.tag == indexPath.row{
-                    cell.myGroupsLogoView.image = UIImage(data: avatar)
-                }
-            }
-        }
-        cell.groupsName.text = data.name
+        cell.setupCell(data: data, indexPath: indexPath)
         return cell
     }
     

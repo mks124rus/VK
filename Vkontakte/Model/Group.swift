@@ -37,24 +37,24 @@ enum groupsLogo: String {
 struct Groups {
     var name: String
     var logo: groupsLogo
-    var postText: String
-    var postPhoto: String
+    var postText: String?
+    var postPhoto: UIImage?
     
     static func createMyGroups() -> [Groups] {
         return [Groups(name: "News", logo: .news, postText: """
                        На Землю может упасть "неконтролируемая" китайская ракета "Чанчжэн-5"
-                       """, postPhoto: ""),
-                Groups(name: "Music", logo: .muisc, postText: "", postPhoto: "car5"),
+                       """, postPhoto: UIImage(named: "")),
+                Groups(name: "Music", logo: .muisc, postText: "", postPhoto: UIImage(named: "car5")),
                 Groups(name: "Games", logo: .games, postText: """
                         КОНСОЛИ ПРОШЛОГО ПОКОЛЕНИЯ НЕ ПОТЯНУЛИ БЫ S.T.A.L.K.E.R. 2, А ВЕРСИЯ ДЛЯ PLAYSTATION 5 ПОКА НЕ ПЛАНИРУЕТСЯ
-                        """, postPhoto: ""),
-                Groups(name: "CarTuning", logo: .cartuning, postText: "Look at this Audi S5! She is AMAaaaaazing!!! 💙💙💙", postPhoto: "car6")].sorted(by: {$0.name < $1.name})
+                        """, postPhoto: UIImage(named: "")),
+                Groups(name: "CarTuning", logo: .cartuning, postText: "Look at this Audi S5! She is AMAaaaaazing!!! 💙💙💙", postPhoto: UIImage(named: "car6")),].sorted(by: {$0.name < $1.name})
     }
     static func createGlobalGroups() -> [Groups] {
-        return [Groups(name: "Global news", logo: .none, postText: "", postPhoto: ""),
-                Groups(name: "Dance", logo: .none, postText: "", postPhoto: ""),
-                Groups(name: "RacingTeam", logo: .none, postText: "", postPhoto: "" ),
-                Groups(name: "Programs", logo: .none, postText: "", postPhoto: "")].sorted(by: {$0.name < $1.name})
+        return [Groups(name: "Global news", logo: .none, postText: "", postPhoto: UIImage(named: "")),
+                Groups(name: "Dance", logo: .none, postText: "", postPhoto: UIImage(named: "")),
+                Groups(name: "RacingTeam", logo: .none, postText: "", postPhoto: UIImage(named: "")),
+                Groups(name: "Programs", logo: .none, postText: "", postPhoto: UIImage(named: ""))].sorted(by: {$0.name < $1.name})
     }
 }
 
