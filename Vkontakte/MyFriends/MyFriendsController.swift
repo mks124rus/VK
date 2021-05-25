@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import Alamofire
 
 struct Section {
     var letter : String
@@ -24,7 +25,7 @@ class MyFriendsController: UIViewController {
     }()
     
     @IBOutlet weak private var myFriendsSearchBar: UISearchBar!
-    @IBOutlet weak private var myFriendsTableView: UITableView!
+    @IBOutlet weak var myFriendsTableView: UITableView!
     
     private let myFriendsCellIdentifier = "MyFriendsCell"
     private let segueIdentifier = "showPhoto"
@@ -37,6 +38,9 @@ class MyFriendsController: UIViewController {
         }
         return true
     }
+    
+    var users: [User] = []
+    
     private var userResults: Results<User>? {
         let users: Results<User>? = realmManager?.getObjects()
         return users?.sorted(byKeyPath: "firstname", ascending: true)
@@ -59,12 +63,14 @@ class MyFriendsController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.myFriendsTableView.dataSource = self
         self.myFriendsTableView.delegate = self
         self.myFriendsTableView.refreshControl = refreshControl
         self.myFriendsSearchBar.delegate = self
         
         self.setFilteredUserNotification()
+        self.opq()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -84,6 +90,32 @@ class MyFriendsController: UIViewController {
             self?.refreshControl.endRefreshing()
         }
         
+    }
+    
+    fileprivate func opq(){
+        let baseURL = "https://api.vk.com"
+        let path = "/method/friends.get"
+        
+        let params: Parameters = [
+            "access_token": "\(NetworkManager.shared.token ?? "")",
+            "fields": "photo_50",
+            "order": "name",
+            "v" : "5.130"
+        ]
+        
+        let opq = OperationQueue()
+        let request = AF.request(baseURL + path, method: .get, parameters: params)
+        let getDataOperation = GetDataOperation(request: request)
+        opq.addOperation(getDataOperation)
+        
+        let parseData = ParseUserData()
+        parseData.addDependency(getDataOperation)
+        opq.addOperation(parseData)
+
+        let reloadTableController = ReloadMyFriendsController(controller: self)
+        reloadTableController.addDependency(parseData)
+        OperationQueue.main.addOperation(reloadTableController)
+        print(self.users)
     }
     
     fileprivate func setFilteredUserNotification() {

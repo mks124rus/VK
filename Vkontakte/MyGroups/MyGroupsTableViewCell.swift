@@ -8,16 +8,15 @@
 import UIKit
 
 class MyGroupsTableViewCell: UITableViewCell {
-
+    
     @IBOutlet weak var groupsName: UILabel!
     @IBOutlet weak var myGroupsLogoView: AvatarView!
-    private var dataLogoCache: [IndexPath : Data] = [:]
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
         let groupLogoViewGesture = UITapGestureRecognizer(target: self, action: #selector(groupLogoAnimate))
         myGroupsLogoView.addGestureRecognizer(groupLogoViewGesture)
-
+        
     }
     
     @objc func groupLogoAnimate() {
@@ -33,24 +32,28 @@ class MyGroupsTableViewCell: UITableViewCell {
         self.myGroupsLogoView.layer.add(animation, forKey: nil)
     }
     
-    private func setAndCacheLogo(data: Group, indexPath: IndexPath){
+    private func setAndCacheLogo(data: Group){
+        let imageCache = ImageCache.instance
         let stringURL = data.avatar
-        if let data = self.dataLogoCache[indexPath] {
+        if let data = imageCache.cache[stringURL]{
             self.myGroupsLogoView.image = UIImage(data: data)
         } else {
             DispatchQueue.global().async {
                 let data: Data = NetworkManager.shared.getImageData(stringURL: stringURL)
                 DispatchQueue.main.async {
-                    self.dataLogoCache[indexPath] = data
+                    imageCache.cache[stringURL] = data
                     self.myGroupsLogoView.image = UIImage(data: data)
                 }
             }
         }
     }
     
-    func setupCell(data: Group, indexPath: IndexPath){
-        self.setAndCacheLogo(data: data, indexPath: indexPath)
+    func setupCell(data: Group, cell: MyGroupsTableViewCell, indexPath: IndexPath){
+        self.myGroupsLogoView.image = nil
+        cell.tag = indexPath.row
+        if cell.tag == indexPath.row {
+            self.setAndCacheLogo(data: data)
+        }
         self.groupsName.text = data.name
     }
-
 }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class NewsCellPhoto: UITableViewCell {
     
@@ -14,7 +15,7 @@ class NewsCellPhoto: UITableViewCell {
     @IBOutlet weak private var logoView: AvatarView!
     @IBOutlet weak private var nameLabel: UILabel!
     @IBOutlet weak private var dateLabel: UILabel!
-    @IBOutlet weak private var textPostLabel: UILabel!
+    @IBOutlet weak var textPostLabel: UILabel!
     @IBOutlet weak private var photoPost: UIImageView!
     @IBOutlet weak private var photoPostHeght: NSLayoutConstraint!
     @IBOutlet weak private var photoPostWidth: NSLayoutConstraint!
@@ -23,9 +24,8 @@ class NewsCellPhoto: UITableViewCell {
     @IBOutlet weak private var commentsCountLabel: UILabel!
     @IBOutlet weak private var repostCountLabel: UILabel!
     
+    @IBOutlet weak var showAllTextButton: UIButton!
     private var dateFormatter = NewsController.dateFormatter
-    private var dataLogoCache: [IndexPath: Data] = [:]
-    private var dataPostCache: [IndexPath: Data] = [:]
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -50,38 +50,39 @@ class NewsCellPhoto: UITableViewCell {
         self.repostCountLabel.text = nil
     }
     
-    private func setAndCacheLogo(data: News, indexPath: IndexPath){
+    private func setAndCacheLogo(data: News){
+        let imageCache = ImageCache.instance
         guard let avatarURL = data.avatar else {return}
 
-        if let data = self.dataLogoCache[indexPath] {
+        if let data = imageCache.cache[avatarURL] {
             self.logoView.image = UIImage(data: data)
         } else {
             DispatchQueue.global(qos: .userInteractive).async {
                 let data: Data = NetworkManager.shared.getImageData(stringURL: avatarURL)
                 DispatchQueue.main.async {
-                    self.dataLogoCache[indexPath] = data
+                    imageCache.cache[avatarURL] = data
                     self.logoView.image = UIImage(data: data)
                 }
             }
         }
     }
     
-    private func setAndCachePhotoPost(data: News, indexPath: IndexPath){
+    private func setAndCachePhotoPost(data: News){
+        let imageCache = ImageCache.instance
         guard let photoPostURL = data.photoURL else {return}
         
-        if let data = dataPostCache[indexPath] {
+        if let data = imageCache.cache[photoPostURL] {
             self.photoPost.image = UIImage(data: data)
         } else {
-            DispatchQueue.global().async {
+            DispatchQueue.global(qos: .userInteractive).async {
                 let data: Data = NetworkManager.shared.getImageData(stringURL: photoPostURL)
                 DispatchQueue.main.async {
-                    self.dataPostCache[indexPath] = data
+                    imageCache.cache[photoPostURL] = data
                     self.photoPost.image = UIImage(data: data)
                 }
             }
         }
     }
-
     
     func setupCell(data: News, indexPath: IndexPath){
 
@@ -91,12 +92,18 @@ class NewsCellPhoto: UITableViewCell {
         self.nameLabel.text = data.name
         let date = Date(timeIntervalSince1970: TimeInterval(data.date))
         self.dateLabel.text = self.dateFormatter.string(from: date)
-        self.textPostLabel.text = data.text
-        self.textPostLabel.text = data.text
-        self.photoPostHeght.constant = CGFloat(data.photoHeight ?? 0)
         
-        self.setAndCacheLogo(data: data, indexPath: indexPath)
-        self.setAndCachePhotoPost(data: data, indexPath: indexPath)
+        self.textPostLabel.text = data.text
+        if textPostLabel.text!.count > 255 {
+            textPostLabel.numberOfLines = 10
+            showAllTextButton.isHidden = false
+        } else {
+            textPostLabel.numberOfLines = 0
+            showAllTextButton.isHidden = true
+        }
+        self.photoPostHeght.constant = CGFloat(data.photoHeight ?? 0)
+        self.setAndCacheLogo(data: data)
+        self.setAndCachePhotoPost(data: data)
         
         self.likeCountLabel.text = String(data.likesCount)
         self.commentsCountLabel.text = String(data.commentsCount)
@@ -110,4 +117,9 @@ class NewsCellPhoto: UITableViewCell {
 
 
     }
+    
+    @IBAction func showAllPostText(_ sender: UIButton) {
+    }
+    
+    
 }

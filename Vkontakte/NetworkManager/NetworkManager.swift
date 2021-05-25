@@ -52,19 +52,14 @@ class NetworkManager {
     }
     //получаем данные из url
     func getImageData(stringURL: String) -> Data {
-//        let imageCache = ImageCache.instance
-//        if imageCache.cache[stringURL] != nil {
-//            return imageCache.cache[stringURL] ?? Data()
-//        }
         guard let url = URL(string: stringURL) else { return Data() }
         guard let imageData = try? Data(contentsOf: url) else { return Data() }
-//        imageCache.cache[stringURL] = imageData
         return imageData
     }
     
     //новости
     func loadNewsFeed(token: String, completion: ((Result<[News], Error>) -> Void)? = nil){
-        DispatchQueue.global(qos: .utility).async {
+
             let baseURL = "https://api.vk.com"
             let path = "/method/newsfeed.get"
             
@@ -77,41 +72,56 @@ class NetworkManager {
                 "v" : "5.130"
             ]
             
-            AF.request(baseURL + path, method: .get, parameters: params).responseJSON { (response) in
-                switch response.result {
-                case .success(let data):
+        AF.request(baseURL + path, method: .get, parameters: params).responseJSON { (response) in
+            switch response.result {
+            case .success(let data):
+                let dispatchGroup = DispatchGroup()
+                var newsData: [News] = []
+                DispatchQueue.global().async(group: dispatchGroup, qos: .utility) {
                     let json = JSON(data)
+            
                     let newsJSON = json["response","items"].arrayValue
                     let usersJSON = json["response","profiles"].arrayValue
                     let groupsJSON = json["response", "groups"].arrayValue
+                    
                     let news = newsJSON.map {News(from: $0) }
                     let user = usersJSON.map {User(from: $0) }
                     let group = groupsJSON.map {Group(from: $0)}
-
-                    for post in news{
-                        if post.sourceID > 0 {
-                            let index = user.firstIndex(where: {item -> Bool in
-                                item.id == post.sourceID
-                            })
-                            post.name = "\(user[index ?? 0].firstLastName)"
-                            post.avatar = "\(user[index ?? 0].avatar)"
-                        } else {
-                            let index = group.firstIndex(where: {item -> Bool in
-                                item.id == post.sourceID * -1
-                            })
-                            post.name = "\(group[index ?? 0].name)"
-                            post.avatar = "\(group[index ?? 0].avatar)"
-                        }
-                    }
+                    self.sourcePostIdentify(news: news, user: user, group: group)
+                    newsData = news
                     
-                    completion?(.success(news))
-                case .failure(let error):
-                    print(error.localizedDescription)
-                    completion?(.failure(error))
                 }
+                
+                dispatchGroup.notify(queue: DispatchQueue.main){
+                    completion?(.success(newsData))
+                }
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                completion?(.failure(error))
             }
         }
     }
+    
+    //определяем владельца поста: группа или друг
+    private func sourcePostIdentify(news: [News], user: [User], group: [Group]){
+        for post in news{
+            if post.sourceID > 0 {
+                let index = user.firstIndex(where: {item -> Bool in
+                    item.id == post.sourceID
+                })
+                post.name = "\(user[index ?? 0].firstLastName)"
+                post.avatar = "\(user[index ?? 0].avatar)"
+            } else {
+                let index = group.firstIndex(where: {item -> Bool in
+                    item.id == post.sourceID * -1
+                })
+                post.name = "\(group[index ?? 0].name)"
+                post.avatar = "\(group[index ?? 0].avatar)"
+            }
+        }
+    }
+    
     //фото друзей
     func loadFriendPhotos(userID: String, completion: ((Result<[Photo], Error>) -> Void)? = nil){
         let baseURL = "https://api.vk.com"
@@ -151,7 +161,6 @@ class NetworkManager {
             "order": "name",
             "v" : "5.130"
         ]
-        
         AF.request(baseURL + path, method: .get, parameters: params).responseJSON { (response) in
             switch response.result {
             case .success(let data):
