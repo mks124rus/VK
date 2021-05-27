@@ -174,6 +174,23 @@ class NetworkManager {
             }
         }
     }
+    
+    func loadFriendsOperations() -> DataRequest?{
+        guard let token = token else {return nil}
+        
+        let baseURL = "https://api.vk.com"
+        let path = "/method/friends.get"
+        
+        let params: Parameters = [
+            "access_token": token,
+            "fields": "photo_50",
+            "order": "name",
+            "v" : "5.130"
+        ]
+        
+        return AF.request(baseURL + path, method: .get, parameters: params)
+    }
+    
     //список групп
     func loadGroups(completion: ((Result<[Group], Error>) -> Void)? = nil){
         let baseURL = "https://api.vk.com"

@@ -35,7 +35,7 @@ class MyFriendsCell: UITableViewCell {
         if let data = imageCache.cache[avatarURL] {
             self.friendAvatarView.image = UIImage(data: data)
         } else {
-            DispatchQueue.global().async {
+            DispatchQueue.global(qos: .userInteractive).async {
                 let data: Data = NetworkManager.shared.getImageData(stringURL: avatarURL)
                 DispatchQueue.main.async {
                     imageCache.cache[avatarURL] = data

@@ -31,15 +31,16 @@ class MyFriendsController: UIViewController {
     private let segueIdentifier = "showPhoto"
     private var dataUser: [Section] = []
     private var realmManager = RealmManager.shared
+    private var networkManager = NetworkManager.shared
     private var filteredUsersNotificationToken: NotificationToken?
+    private var operationQueue = OperationQueue()
+    
     private var searchActive: Bool {
         if myFriendsSearchBar.text == "" || myFriendsSearchBar.text == nil{
             return false
         }
         return true
     }
-    
-    var users: [User] = []
     
     private var userResults: Results<User>? {
         let users: Results<User>? = realmManager?.getObjects()
@@ -70,13 +71,14 @@ class MyFriendsController: UIViewController {
         self.myFriendsSearchBar.delegate = self
         
         self.setFilteredUserNotification()
-        self.opq()
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let users = userResults, users.isEmpty{
-        self.loadData()
+//        self.loadData()
+            self.loadDataWithOperations()
         }
         self.createSection()
     }
@@ -86,36 +88,32 @@ class MyFriendsController: UIViewController {
     }
     
     @objc func refresh(_ sender: UIRefreshControl) {
-        loadData() { [weak self] in
+        //        self.loadData()
+        self.loadDataWithOperations() { [weak self] in
             self?.refreshControl.endRefreshing()
         }
         
     }
     
-    fileprivate func opq(){
-        let baseURL = "https://api.vk.com"
-        let path = "/method/friends.get"
+    fileprivate func loadDataWithOperations(completion: (() -> Void)? = nil){
+        operationQueue.qualityOfService = .utility
         
-        let params: Parameters = [
-            "access_token": "\(NetworkManager.shared.token ?? "")",
-            "fields": "photo_50",
-            "order": "name",
-            "v" : "5.130"
-        ]
-        
-        let opq = OperationQueue()
-        let request = AF.request(baseURL + path, method: .get, parameters: params)
+        guard let request = networkManager.loadFriendsOperations() else {return}
+//        загрузка данных
         let getDataOperation = GetDataOperation(request: request)
-        opq.addOperation(getDataOperation)
+//        парсинг
+        let parseData = ParseUserDataOperation()
+//        сохранение в реалм
+        let saveRealm = SaveToRealmOperation()
         
-        let parseData = ParseUserData()
         parseData.addDependency(getDataOperation)
-        opq.addOperation(parseData)
-
-        let reloadTableController = ReloadMyFriendsController(controller: self)
-        reloadTableController.addDependency(parseData)
-        OperationQueue.main.addOperation(reloadTableController)
-        print(self.users)
+        saveRealm.addDependency(parseData)
+       
+        operationQueue.addOperation(getDataOperation)
+        operationQueue.addOperation(parseData)
+        OperationQueue.main.addOperation(saveRealm)
+        
+        completion?()
     }
     
     fileprivate func setFilteredUserNotification() {

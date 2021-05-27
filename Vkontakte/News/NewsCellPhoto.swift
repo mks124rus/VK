@@ -94,6 +94,7 @@ class NewsCellPhoto: UITableViewCell {
         self.dateLabel.text = self.dateFormatter.string(from: date)
         
         self.textPostLabel.text = data.text
+        
         if textPostLabel.text!.count > 255 {
             textPostLabel.numberOfLines = 10
             showAllTextButton.isHidden = false
@@ -101,6 +102,7 @@ class NewsCellPhoto: UITableViewCell {
             textPostLabel.numberOfLines = 0
             showAllTextButton.isHidden = true
         }
+        
         self.photoPostHeght.constant = CGFloat(data.photoHeight ?? 0)
         self.setAndCacheLogo(data: data)
         self.setAndCachePhotoPost(data: data)

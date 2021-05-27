@@ -10,11 +10,6 @@ import Alamofire
 
 class GetDataOperation: AsyncOperation {
 
-    override func cancel() {
-        request.cancel()
-        super.cancel()
-    }
-    
     private var request: DataRequest
     var data: Data?
     
@@ -23,6 +18,11 @@ class GetDataOperation: AsyncOperation {
             self?.data = response.data
             self?.state = .finished
         }
+    }
+    
+    override func cancel() {
+        request.cancel()
+        super.cancel()
     }
     
     init(request: DataRequest) {
