@@ -9,11 +9,11 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="NewsCellPhoto" id="KGk-i7-Jjw" customClass="NewsCellPhoto" customModule="Vkontakte" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="340" height="409"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="NewsCellPhoto" rowHeight="406" id="KGk-i7-Jjw" customClass="NewsCellPhoto" customModule="Vkontakte" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="340" height="406"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="340" height="409"/>
+                <rect key="frame" x="0.0" y="0.0" width="340" height="406"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fde-X9-U2V">
@@ -56,13 +56,13 @@
                         </constraints>
                     </view>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aav-je-8HA">
-                        <rect key="frame" x="8" y="56" width="324" height="209"/>
+                        <rect key="frame" x="8" y="56" width="324" height="186"/>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
                     </label>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6rL-x7-tA6">
-                        <rect key="frame" x="0.0" y="373" width="340" height="36"/>
+                        <rect key="frame" x="0.0" y="370" width="340" height="36"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pgg-qn-ntJ">
                                 <rect key="frame" x="8" y="8" width="20" height="20"/>
@@ -138,17 +138,31 @@
                         </constraints>
                     </view>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Toi-Xm-q6c">
-                        <rect key="frame" x="0.0" y="273" width="340" height="100"/>
+                        <rect key="frame" x="0.0" y="270" width="340" height="100"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="340" id="3wq-Z5-xCd"/>
                             <constraint firstAttribute="height" constant="100" id="grV-wJ-IXu"/>
                         </constraints>
                     </imageView>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HQQ-j3-bBp">
+                        <rect key="frame" x="8" y="242" width="179" height="20"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="20" id="eR9-iU-e44"/>
+                        </constraints>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <state key="normal" title="Показать полностью..."/>
+                        <connections>
+                            <action selector="showAllPostText:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="0No-pE-aLx"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="Toi-Xm-q6c" firstAttribute="top" secondItem="HQQ-j3-bBp" secondAttribute="bottom" constant="8" id="15E-ec-Jh6"/>
                     <constraint firstAttribute="trailing" secondItem="Toi-Xm-q6c" secondAttribute="trailing" id="15O-4Z-8zK"/>
+                    <constraint firstItem="HQQ-j3-bBp" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="F0l-uZ-c5q"/>
                     <constraint firstAttribute="trailing" secondItem="Fde-X9-U2V" secondAttribute="trailing" id="Gbm-Gq-eQL"/>
                     <constraint firstAttribute="trailing" secondItem="6rL-x7-tA6" secondAttribute="trailing" id="S2J-T4-h3f"/>
+                    <constraint firstItem="HQQ-j3-bBp" firstAttribute="top" secondItem="aav-je-8HA" secondAttribute="bottom" id="TBV-Pi-AF9"/>
                     <constraint firstAttribute="trailing" secondItem="aav-je-8HA" secondAttribute="trailing" constant="8" id="TNr-wk-MsQ"/>
                     <constraint firstItem="aav-je-8HA" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="W0l-7r-jHh"/>
                     <constraint firstItem="6rL-x7-tA6" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="crM-XN-1hX"/>
@@ -156,7 +170,6 @@
                     <constraint firstItem="Fde-X9-U2V" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="eZD-6r-oun"/>
                     <constraint firstItem="Toi-Xm-q6c" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="q9c-l9-Ztr"/>
                     <constraint firstItem="aav-je-8HA" firstAttribute="top" secondItem="Fde-X9-U2V" secondAttribute="bottom" id="tR5-kT-rbU"/>
-                    <constraint firstItem="Toi-Xm-q6c" firstAttribute="top" secondItem="aav-je-8HA" secondAttribute="bottom" constant="8" id="uNB-Zp-MpS"/>
                     <constraint firstAttribute="bottom" secondItem="6rL-x7-tA6" secondAttribute="bottom" id="v4a-RI-PLB"/>
                     <constraint firstItem="Fde-X9-U2V" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="yGe-YZ-bWR"/>
                 </constraints>
@@ -172,9 +185,10 @@
                 <outlet property="photoPostHeght" destination="grV-wJ-IXu" id="tPT-hF-zxw"/>
                 <outlet property="photoPostWidth" destination="3wq-Z5-xCd" id="Gjn-5M-Qdi"/>
                 <outlet property="repostCountLabel" destination="J8S-yu-akH" id="2Tc-5m-1Du"/>
+                <outlet property="showAllTextButton" destination="HQQ-j3-bBp" id="qk6-Ll-bSm"/>
                 <outlet property="textPostLabel" destination="aav-je-8HA" id="5wb-A3-8Qr"/>
             </connections>
-            <point key="canvasLocation" x="60.869565217391312" y="124.21875"/>
+            <point key="canvasLocation" x="60.869565217391312" y="125.22321428571428"/>
         </tableViewCell>
     </objects>
     <resources>

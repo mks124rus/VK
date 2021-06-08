@@ -29,7 +29,6 @@ class NewsCellText: UITableViewCell {
     static let identifier = "NewsCellText"
     
     private var dateFormatter = NewsController.dateFormatter
-    private var dataLogoCache: [IndexPath: Data] = [:]
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -52,16 +51,17 @@ class NewsCellText: UITableViewCell {
         self.repostCountLabel.text = nil
     }
     
-    private func setAndCacheLogo(data: News, indexPath: IndexPath){
+    private func setAndCacheLogo(data: News){
+        let imageCache = ImageCache.instance
         guard let avatarURL = data.avatar else {return}
 
-        if let data = self.dataLogoCache[indexPath] {
+        if let data = imageCache.cache[avatarURL] {
             self.logoView.image = UIImage(data: data)
         } else {
             DispatchQueue.global().async {
                 let data: Data = NetworkManager.shared.getImageData(stringURL: avatarURL)
                 DispatchQueue.main.async {
-                    self.dataLogoCache[indexPath] = data
+                    imageCache.cache[avatarURL] = data
                     self.logoView.image = UIImage(data: data)
                 }
             }
@@ -74,7 +74,7 @@ class NewsCellText: UITableViewCell {
         self.dateLabel.text = self.dateFormatter.string(from: date)
         self.nameLabel.text = data.name
         self.textPostLabel.text = data.text
-        self.setAndCacheLogo(data: data, indexPath: indexPath)
+        self.setAndCacheLogo(data: data)
         self.likeCountLabel.text = String(data.likesCount)
         self.commentsCountLabel.text = String(data.commentsCount)
         self.repostCountLabel.text = String(data.repostsCount)

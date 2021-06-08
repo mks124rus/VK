@@ -7,6 +7,7 @@
 
 import UIKit
 import RealmSwift
+import Alamofire
 
 struct Section {
     var letter : String
@@ -24,19 +25,23 @@ class MyFriendsController: UIViewController {
     }()
     
     @IBOutlet weak private var myFriendsSearchBar: UISearchBar!
-    @IBOutlet weak private var myFriendsTableView: UITableView!
+    @IBOutlet weak var myFriendsTableView: UITableView!
     
     private let myFriendsCellIdentifier = "MyFriendsCell"
     private let segueIdentifier = "showPhoto"
     private var dataUser: [Section] = []
     private var realmManager = RealmManager.shared
+    private var networkManager = NetworkManager.shared
     private var filteredUsersNotificationToken: NotificationToken?
+    private var operationQueue = OperationQueue()
+    
     private var searchActive: Bool {
         if myFriendsSearchBar.text == "" || myFriendsSearchBar.text == nil{
             return false
         }
         return true
     }
+    
     private var userResults: Results<User>? {
         let users: Results<User>? = realmManager?.getObjects()
         return users?.sorted(byKeyPath: "firstname", ascending: true)
@@ -59,18 +64,21 @@ class MyFriendsController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.myFriendsTableView.dataSource = self
         self.myFriendsTableView.delegate = self
         self.myFriendsTableView.refreshControl = refreshControl
         self.myFriendsSearchBar.delegate = self
         
         self.setFilteredUserNotification()
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let users = userResults, users.isEmpty{
-        self.loadData()
+//        self.loadData()
+            self.loadDataWithOperations()
         }
         self.createSection()
     }
@@ -80,10 +88,32 @@ class MyFriendsController: UIViewController {
     }
     
     @objc func refresh(_ sender: UIRefreshControl) {
-        loadData() { [weak self] in
+        //        self.loadData()
+        self.loadDataWithOperations() { [weak self] in
             self?.refreshControl.endRefreshing()
         }
         
+    }
+    
+    fileprivate func loadDataWithOperations(completion: (() -> Void)? = nil){
+        operationQueue.qualityOfService = .utility
+        
+        guard let request = networkManager.loadFriendsOperations() else {return}
+//        загрузка данных
+        let getDataOperation = GetDataOperation(request: request)
+//        парсинг
+        let parseData = ParseUserDataOperation()
+//        сохранение в реалм
+        let saveRealm = SaveToRealmOperation()
+        
+        parseData.addDependency(getDataOperation)
+        saveRealm.addDependency(parseData)
+       
+        operationQueue.addOperation(getDataOperation)
+        operationQueue.addOperation(parseData)
+        OperationQueue.main.addOperation(saveRealm)
+        
+        completion?()
     }
     
     fileprivate func setFilteredUserNotification() {

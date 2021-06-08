@@ -42,7 +42,6 @@ class FriendsPhotosController: UIViewController{
     }()
     private var cellID = "FriendsPhotosViewCell"
     private var currentPhoto = Int()
-//    private var dataPhoto:[Photo] = []
     var userID: String = ""
     private var realmManager = RealmManager.shared
     private var networkManager = NetworkManager.shared
@@ -60,6 +59,7 @@ class FriendsPhotosController: UIViewController{
     }
     
     private var photoResultsNotificationToken: NotificationToken?
+    private var imagesForPreview: [UIImage] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -156,18 +156,27 @@ class FriendsPhotosController: UIViewController{
             [weak self] (result) in
             switch result {
             case .success(let photoArray):
-                DispatchQueue.main.async {
 //                  self?.dataPhoto = photoArray
                     try? self?.realmManager?.add(objects: photoArray)
 //                    self?.friendsPhotosColletctionView.reloadData()
                     completion?()
-                }
+                
             case .failure(let error):
                 print(error.localizedDescription)
             }
         }
     }
     
+    private func setupPreviewPhotoImageView(stringURL: String){
+        DispatchQueue.global().async {
+            let data: Data = self.networkManager.getImageData(stringURL: stringURL)
+            DispatchQueue.main.async {
+                let pressedImage = UIImage(data: data)
+                self.previewPhotoImageView.image = pressedImage
+                self.previewPhotoIsOpenAnimation()
+            }
+        }
+    }
 }
 
 extension FriendsPhotosController: UICollectionViewDelegate {
@@ -175,16 +184,9 @@ extension FriendsPhotosController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         self.NoPhotoLabel.isHidden = true
         guard let photoResults = self.photoResults else {return}
+        self.currentPhoto = indexPath.item
         let stringURL = photoResults[indexPath.item].url
-        DispatchQueue.global().async {
-            let data: Data = self.networkManager.getImageData(stringURL: stringURL)
-            DispatchQueue.main.async {
-                let pressedImage = UIImage(data: data)
-                self.currentPhoto = indexPath.item
-                self.previewPhotoImageView.image = pressedImage
-                self.previewPhotoIsOpenAnimation()
-            }
-        }
+        self.setupPreviewPhotoImageView(stringURL: stringURL)
     }
 }
 

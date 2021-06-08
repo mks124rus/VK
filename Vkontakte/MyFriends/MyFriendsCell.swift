@@ -10,7 +10,7 @@ import UIKit
 class MyFriendsCell: UITableViewCell {
     @IBOutlet weak private var friendNameLabel: UILabel!
     @IBOutlet weak private var friendAvatarView: AvatarView!
-    private var dataAvatarCache: [IndexPath: Data] = [:]
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -28,20 +28,18 @@ class MyFriendsCell: UITableViewCell {
         
     }
     
-    private func setAndCacheLogo(data: User, cell: MyFriendsCell, indexPath: IndexPath){
+    private func setAndCacheLogo(data: User){
+        let imageCache = ImageCache.instance
         let avatarURL = data.avatar
-        self.friendAvatarView.image = nil // ставим нил чтобы не было мерцания аватарок при скроллинге
-        cell.tag = indexPath.row //чтобы не путались аватарки друзей, после обновления таблицы, когда обновляется запись в рилм
-        if let data = self.dataAvatarCache[indexPath] {
+
+        if let data = imageCache.cache[avatarURL] {
             self.friendAvatarView.image = UIImage(data: data)
         } else {
-            DispatchQueue.global().async {
+            DispatchQueue.global(qos: .userInteractive).async {
                 let data: Data = NetworkManager.shared.getImageData(stringURL: avatarURL)
                 DispatchQueue.main.async {
-                    self.dataAvatarCache[indexPath] = data
-                    if cell.tag == indexPath.row{
+                    imageCache.cache[avatarURL] = data
                     self.friendAvatarView.image = UIImage(data: data)
-                    }
                 }
             }
         }
@@ -50,9 +48,14 @@ class MyFriendsCell: UITableViewCell {
     func setupCell(data: [Section], cell: MyFriendsCell, indexPath: IndexPath){
         let data = data[indexPath.section].names[indexPath.row]
         let name = data.firstLastName
+        self.friendAvatarView.image = nil
+        cell.tag = indexPath.row
         self.friendNameLabel?.text = name
-        self.setAndCacheLogo(data: data, cell: cell, indexPath: indexPath)
+        
+        if cell.tag == indexPath.row{
+            self.setAndCacheLogo(data: data)
         }
+    }
     
     
     @objc func friendAvatarAnimate() {

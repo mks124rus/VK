@@ -6,7 +6,7 @@
 //
 
 import UIKit
-
+import Alamofire
 class NewsController: UIViewController {
     
     @IBOutlet weak private var newsTableView: UITableView!
@@ -30,7 +30,8 @@ class NewsController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+        self.loadData()
         self.newsTableView.dataSource = self
         self.newsTableView.delegate = self
         self.newsTableView.register(UINib(nibName: "NewsCellPhoto", bundle: nil), forCellReuseIdentifier: NewsCellPhoto.identifier)
@@ -40,7 +41,6 @@ class NewsController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.loadData()
     }
     
     @objc func refresh(_ sender: UIRefreshControl) {
@@ -66,6 +66,13 @@ class NewsController: UIViewController {
                 print(error.localizedDescription)
             }
         }
+    }
+    
+    @objc func showAllText(_ sender: UIButton){
+        let ind = sender.tag
+        print(ind)
+        let indx = IndexPath(row: 0, section: ind)
+        print(indx)
     }
     
 }
@@ -101,6 +108,7 @@ extension NewsController: UITableViewDataSource {
         if data.photoURL != nil{
             guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCellPhoto.identifier, for: indexPath) as? NewsCellPhoto else { return UITableViewCell()}
             cell.setupCell(data: data, indexPath: indexPath)
+            cell.showAllTextButton.addTarget(self, action: #selector(showAllText(_:)), for: .touchUpInside)
             return cell
             
         } else {

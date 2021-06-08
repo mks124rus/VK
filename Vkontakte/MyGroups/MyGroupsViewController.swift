@@ -120,7 +120,7 @@ extension MyGroupsViewController: UITableViewDataSource{
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? MyGroupsTableViewCell else {return UITableViewCell()}
         guard let data = groupResults?[indexPath.row] else {return UITableViewCell()}
-        cell.setupCell(data: data, indexPath: indexPath)
+        cell.setupCell(data: data, cell: cell, indexPath: indexPath)
         return cell
     }
     
