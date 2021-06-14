@@ -9,7 +9,7 @@ import UIKit
 import Alamofire
 class NewsController: UIViewController {
     
-    @IBOutlet weak private var newsTableView: UITableView!
+    @IBOutlet weak var newsTableView: UITableView!
     
     private var post:[News] = []
     private var token = NetworkManager.shared.token
@@ -107,7 +107,7 @@ extension NewsController: UITableViewDataSource {
         
         if data.photoURL != nil{
             guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCellPhoto.identifier, for: indexPath) as? NewsCellPhoto else { return UITableViewCell()}
-            cell.setupCell(data: data, indexPath: indexPath)
+            cell.setupCell(data: data)
             cell.showAllTextButton.addTarget(self, action: #selector(showAllText(_:)), for: .touchUpInside)
             return cell
             
@@ -115,12 +115,8 @@ extension NewsController: UITableViewDataSource {
             
             guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCellText.identifier, for: indexPath) as? NewsCellText else { return UITableViewCell()}
 
-            cell.setupCell(data: data, indexPath: indexPath)
-
+            cell.setupCell(data: data)
             return cell
         }
-        
     }
-    
-    
 }

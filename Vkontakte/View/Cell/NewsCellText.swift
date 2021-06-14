@@ -29,7 +29,7 @@ class NewsCellText: UITableViewCell {
     static let identifier = "NewsCellText"
     
     private var dateFormatter = NewsController.dateFormatter
-    
+    private var photoService = PhotoService.instance
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -51,30 +51,35 @@ class NewsCellText: UITableViewCell {
         self.repostCountLabel.text = nil
     }
     
-    private func setAndCacheLogo(data: News){
-        let imageCache = ImageCache.instance
-        guard let avatarURL = data.avatar else {return}
-
-        if let data = imageCache.cache[avatarURL] {
-            self.logoView.image = UIImage(data: data)
-        } else {
-            DispatchQueue.global().async {
-                let data: Data = NetworkManager.shared.getImageData(stringURL: avatarURL)
-                DispatchQueue.main.async {
-                    imageCache.cache[avatarURL] = data
-                    self.logoView.image = UIImage(data: data)
-                }
-            }
-        }
-    }
+//    private func setAndCacheLogo(data: News){
+//        let imageCache = ImageCache.instance
+//        guard let avatarURL = data.avatar else {return}
+//
+//        if let data = imageCache.cache[avatarURL] {
+//            self.logoView.image = UIImage(data: data)
+//        } else {
+//            DispatchQueue.global().async {
+//                let data: Data = NetworkManager.shared.getImageData(stringURL: avatarURL)
+//                DispatchQueue.main.async {
+//                    imageCache.cache[avatarURL] = data
+//                    self.logoView.image = UIImage(data: data)
+//                }
+//            }
+//        }
+//    }
     
-    func setupCell(data: News, indexPath: IndexPath){
-
+    public func setupCell(data: News){
+        guard let stringURL = data.avatar else {return}
         let date = Date(timeIntervalSince1970: TimeInterval(data.date))
         self.dateLabel.text = self.dateFormatter.string(from: date)
         self.nameLabel.text = data.name
         self.textPostLabel.text = data.text
-        self.setAndCacheLogo(data: data)
+//        self.setAndCacheLogo(data: data)
+        photoService.photo(stringURL: stringURL) { [weak self] (image) in
+            DispatchQueue.main.async {
+                self?.logoView.image = image
+            }
+        }
         self.likeCountLabel.text = String(data.likesCount)
         self.commentsCountLabel.text = String(data.commentsCount)
         self.repostCountLabel.text = String(data.repostsCount)

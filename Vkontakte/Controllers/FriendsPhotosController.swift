@@ -10,7 +10,7 @@ import RealmSwift
 import SDWebImage
 class FriendsPhotosController: UIViewController{
     
-    @IBOutlet weak private var friendsPhotosColletctionView: UICollectionView!{
+    @IBOutlet weak var friendsPhotosColletctionView: UICollectionView!{
         didSet{
             self.friendsPhotosColletctionView.alwaysBounceVertical = true
             self.friendsPhotosColletctionView.refreshControl? = refreshControl
@@ -45,6 +45,7 @@ class FriendsPhotosController: UIViewController{
     var userID: String = ""
     private var realmManager = RealmManager.shared
     private var networkManager = NetworkManager.shared
+    private var photoService = PhotoService.instance
     private var userResults: Results<User>?{
         let usersResult: Results<User>? = realmManager?.getObjects()
         let ownerID = Int(userID)
@@ -59,7 +60,6 @@ class FriendsPhotosController: UIViewController{
     }
     
     private var photoResultsNotificationToken: NotificationToken?
-    private var imagesForPreview: [UIImage] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,17 +71,16 @@ class FriendsPhotosController: UIViewController{
         self.previewPhotoGesture()
         self.loadData()
         self.setPhotosNotification()
-
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-//        self.addRelationships()
+        //        self.addRelationships()
     }
     
     deinit {
@@ -124,7 +123,7 @@ class FriendsPhotosController: UIViewController{
                     self?.friendsPhotosColletctionView.insertItems(at: insertionsIndexPath)
                     self?.friendsPhotosColletctionView.reloadItems(at: modificationsIndexPath)
                 }, completion: nil)
-
+                
                 break
             case .error(let error):
                 print(error.localizedDescription)
@@ -132,7 +131,7 @@ class FriendsPhotosController: UIViewController{
         }
     }
     
-// default.realm создание связи между другом и его фотографиями
+    // default.realm создание связи между другом и его фотографиями
     private func addRelationships(){
         guard let photoResults = self.photoResults else {return}
         guard self.userResults != nil else {return}
@@ -156,10 +155,10 @@ class FriendsPhotosController: UIViewController{
             [weak self] (result) in
             switch result {
             case .success(let photoArray):
-//                  self?.dataPhoto = photoArray
-                    try? self?.realmManager?.add(objects: photoArray)
-//                    self?.friendsPhotosColletctionView.reloadData()
-                    completion?()
+                //                  self?.dataPhoto = photoArray
+                try? self?.realmManager?.add(objects: photoArray)
+                //                    self?.friendsPhotosColletctionView.reloadData()
+                completion?()
                 
             case .failure(let error):
                 print(error.localizedDescription)
@@ -168,14 +167,21 @@ class FriendsPhotosController: UIViewController{
     }
     
     private func setupPreviewPhotoImageView(stringURL: String){
-        DispatchQueue.global().async {
-            let data: Data = self.networkManager.getImageData(stringURL: stringURL)
+        photoService.photo(stringURL: stringURL) { [weak self] (image) in
             DispatchQueue.main.async {
-                let pressedImage = UIImage(data: data)
-                self.previewPhotoImageView.image = pressedImage
-                self.previewPhotoIsOpenAnimation()
+                self?.previewPhotoImageView.image = image
+                self?.previewPhotoIsOpenAnimation()
             }
         }
+        //
+        //        DispatchQueue.global().async {
+        //            let data: Data = self.networkManager.getImageData(stringURL: stringURL)
+        //            DispatchQueue.main.async {
+        //                let pressedImage = UIImage(data: data)
+        //                self.previewPhotoImageView.image = pressedImage
+        //                self.previewPhotoIsOpenAnimation()
+        //            }
+        //        }
     }
 }
 
@@ -248,8 +254,8 @@ extension FriendsPhotosController {
     private func swipeLeftAnimationPreviewPhoto(){
         guard let photoResults = self.photoResults else {return}
         let currentStringURL = photoResults.map{$0.url}[self.currentPhoto]
-        let dataImage: Data = self.networkManager.getImageData(stringURL: currentStringURL)
-        let image = UIImage(data: dataImage)
+        //        let dataImage: Data = self.networkManager.getImageData(stringURL: currentStringURL)
+        //        let image = UIImage(data: dataImage)
         
         UIView.animate(withDuration: 0.75,
                        delay: 0,
@@ -273,7 +279,11 @@ extension FriendsPhotosController {
                                                        options: .curveEaseOut,
                                                        animations: {
                                                         self.previewPhotoImageView.center.x -= self.previewPhotoImageView.frame.width
-                                                        self.previewPhotoImageView.image = image
+                                                        self.photoService.photo(stringURL: currentStringURL) {[weak self](image) in
+                                                            DispatchQueue.main.async {
+                                                                self?.previewPhotoImageView.image = image
+                                                            }
+                                                        }
                                                        },
                                                        completion: {_ in
                                                         
@@ -287,8 +297,8 @@ extension FriendsPhotosController {
     private func swipeRightAnimationPreviewPhoto(){
         guard let photoResults = self.photoResults else {return}
         let currentStringURL = photoResults.map{$0.url}[self.currentPhoto]
-        let dataImage: Data = self.networkManager.getImageData(stringURL: currentStringURL)
-        let image = UIImage(data: dataImage)
+        //        let dataImage: Data = self.networkManager.getImageData(stringURL: currentStringURL)
+        //        let image = UIImage(data: dataImage)
         
         UIView.animate(withDuration: 0.75,
                        delay: 0,
@@ -312,7 +322,11 @@ extension FriendsPhotosController {
                                                        options: .curveEaseOut,
                                                        animations: {
                                                         self.previewPhotoImageView.center.x += self.previewPhotoImageView.frame.width
-                                                        self.previewPhotoImageView.image = image
+                                                        self.photoService.photo(stringURL: currentStringURL) {[weak self](image) in
+                                                            DispatchQueue.main.async {
+                                                                self?.previewPhotoImageView.image = image
+                                                            }
+                                                        }
                                                        },
                                                        completion: {_ in
                                                         
@@ -583,50 +597,57 @@ extension FriendsPhotosController{
         guard let photoResults = self.photoResults else {return}
         let stringURL = photoResults[self.currentPhoto].url
         
-        DispatchQueue.global().async{
-            let imageData: Data = NetworkManager.shared.getImageData(stringURL: stringURL)
-            DispatchQueue.main.async {
-                let image = UIImage(data: imageData)
-                if let swipeGesture = gesture as? UISwipeGestureRecognizer {
-                    switch swipeGesture.direction {
-                    case UISwipeGestureRecognizer.Direction.left:
-                        print("swipe left")
-                        if self.currentPhoto == photoResults.count - 1 {
-                            print("end", +self.currentPhoto)
-                            self.currentPhoto = photoResults.endIndex - 1
+        self.photoService.photo(stringURL: stringURL) { [weak self] image in
+            guard let self = self else {return}
+            if let swipeGesture = gesture as? UISwipeGestureRecognizer {
+                switch swipeGesture.direction {
+                case UISwipeGestureRecognizer.Direction.left:
+                    print("swipe left")
+                    if self.currentPhoto == photoResults.count - 1 {
+                        print("end", +self.currentPhoto)
+                        self.currentPhoto = photoResults.endIndex - 1
+                        DispatchQueue.main.async {
                             self.previewPhotoImageView.image = image
                             self.lastPhotoInPreviewPhotoAnimation()
-                        }else{
-                            self.currentPhoto += 1
-                            self.swipeLeftAnimationPreviewPhoto()
-                            self.previewPhotoImageView.image = image
-                            print("else left", +self.currentPhoto)
                         }
-                        
-                    case UISwipeGestureRecognizer.Direction.right:
-                        print("swipe right")
-                        
-                        if self.currentPhoto == photoResults.startIndex {
-                            print("begin", +self.currentPhoto)
-                            self.currentPhoto = photoResults.startIndex
+
+                    }else{
+                        self.currentPhoto += 1
+                        self.swipeLeftAnimationPreviewPhoto()
+                        DispatchQueue.main.async {
+                            self.previewPhotoImageView.image = image
+                        }
+                        print("else left", +self.currentPhoto)
+                    }
+                    
+                case UISwipeGestureRecognizer.Direction.right:
+                    print("swipe right")
+                    
+                    if self.currentPhoto == photoResults.startIndex {
+                        print("begin", +self.currentPhoto)
+                        self.currentPhoto = photoResults.startIndex
+                        DispatchQueue.main.async {
                             self.previewPhotoImageView.image = image
                             self.firstPhotoInPreviewPhotoAnimation()
-                        }else{
-                            self.currentPhoto -= 1
-                            print("else right", +self.currentPhoto)
-                            self.previewPhotoImageView.image = image
-                            self.swipeRightAnimationPreviewPhoto()
                         }
-                        
-                    case UISwipeGestureRecognizer.Direction.down:
-                        print("swipe down")
-                        self.previewPhotoIsCloseWithSwipeDownAnimation()
-                    case UISwipeGestureRecognizer.Direction.up:
-                        print("swipe up")
-                        self.previewPhotoIsCloseWithSwipeUpAnimation()
-                    default:
-                        break
+                    }else{
+                        self.currentPhoto -= 1
+                        print("else right", +self.currentPhoto)
+                        self.swipeRightAnimationPreviewPhoto()
+                        DispatchQueue.main.async {
+                            self.previewPhotoImageView.image = image
+                        }
+
                     }
+                    
+                case UISwipeGestureRecognizer.Direction.down:
+                    print("swipe down")
+                    self.previewPhotoIsCloseWithSwipeDownAnimation()
+                case UISwipeGestureRecognizer.Direction.up:
+                    print("swipe up")
+                    self.previewPhotoIsCloseWithSwipeUpAnimation()
+                default:
+                    break
                 }
             }
         }

@@ -9,10 +9,16 @@ import UIKit
 
 class PreferenceViewController: UITableViewController {
 
+    @IBOutlet weak var clearCacheButton: UIButton!
     @IBOutlet weak private var logOutButton: UIButton!
     @IBAction func logOut(unwindSegue: UIStoryboardSegue) {
         logOutButtonAnimation()
         showLogOutAlert()
+    }
+    
+    @IBAction func clearCache(_ sender: UIButton) {
+        PhotoService.instance.clearCache()
+        showClearCacheAlert()
     }
     
     func showLogOutAlert() {
@@ -24,6 +30,14 @@ class PreferenceViewController: UITableViewController {
         let actionNo = UIAlertAction(title: "Нет", style: .cancel, handler: nil)
 
         alert.addAction(actionNo)
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func showClearCacheAlert() {
+        let alert = UIAlertController(title: "Кэш очищен", message: nil, preferredStyle: .alert)
+        let actionOK = UIAlertAction(title: "Ок", style: .default)
+        alert.addAction(actionOK)
+
         present(alert, animated: true, completion: nil)
     }
     
@@ -59,7 +73,7 @@ class PreferenceViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 1
+        return 2
     }
 
     /*
