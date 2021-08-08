@@ -47,9 +47,60 @@ class MyFriendsCell: UITableViewCell {
 //        }
 //    }
     
+    let insets: CGFloat = 20.0
+    
+    func setTextFriendNameLabel(text: String){
+        self.friendNameLabel.text = text
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.frameFriendAvatarView()
+        self.frameFriendNameLabel()
+        
+    }
+    
+    private func getFriendNameLabelSize(text: String, font: UIFont) -> CGSize{
+        
+        // определяем максимальную ширину текста - это ширина ячейки минус отступы слева и справа и минус аватарка
+        let maxWidth = bounds.width - insets * 2 - self.friendAvatarView.frame.width
+        //получаем размеры блока, в который надо вписать надпись
+        //используем максимальную ширину и максимально возможную высоту
+        let textBlock = CGSize(width: maxWidth, height: CGFloat.greatestFiniteMagnitude)
+        //получим прямоугольник, который займёт наш текст в этом блоке
+        let rect = text.boundingRect(with: textBlock, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: font], context: nil)
+        //получаем ширину блока, переводим ее в Double
+        let width = Double(rect.size.width)
+        //получаем высоту блока, переводим ее в Double
+        let height = Double(rect.size.height)
+        //получаем размер, при этом округляем значения до большего целого числа
+        let size = CGSize(width: ceil(width), height: ceil(height))
+
+        return size
+    }
+    
+    private func frameFriendNameLabel(){
+        //получаем размер текста, передавая сам текст и шрифт.
+        let size = getFriendNameLabelSize(text: friendNameLabel.text ?? "Имя Фамилия", font: friendNameLabel.font)
+        let originX = bounds.minX + insets
+        let originY = bounds.midY - size.height/2
+        let origin = CGPoint(x: originX, y: originY)
+        self.friendNameLabel.frame = CGRect(origin: origin, size: size)
+    }
+    
+    private func frameFriendAvatarView(){
+        let avatarSideLenght: CGFloat = 40
+        let size = CGSize(width: avatarSideLenght, height: avatarSideLenght)
+        let origin = CGPoint(x: bounds.maxX - avatarSideLenght - insets*1.5, y: bounds.midY - avatarSideLenght/2)
+        self.friendAvatarView.frame = CGRect(origin: origin, size: size)
+    }
+    
+    
+    
     public func setupCell(data: User){
         
-        self.friendNameLabel?.text = data.firstLastName
+        self.setTextFriendNameLabel(text: data.firstLastName)
+//      self.friendNameLabel?.text = data.firstLastName
 //      self.setAndCacheLogo(data: data)
         photoService.photo(stringURL: data.avatar) {[weak self] (image) in
             DispatchQueue.main.async {

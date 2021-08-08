@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -185,7 +185,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="MyGroupsCell" id="y1N-2w-xz1" customClass="MyGroupsCell" customModule="Vkontakte" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                                <rect key="frame" x="0.0" y="24.5" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="y1N-2w-xz1" id="sgX-io-cCS">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
@@ -259,7 +259,7 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="GlobalGroupsCell" id="eHE-q5-wAk" customClass="GlobalGroupsCell" customModule="Vkontakte" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                                <rect key="frame" x="0.0" y="24.5" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="eHE-q5-wAk" id="w27-lg-UR0">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
@@ -330,30 +330,40 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="GD6-yP-1WC">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="54" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="GD6-yP-1WC">
                                 <rect key="frame" x="0.0" y="88" width="414" height="676"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="sectionIndexBackgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="MyGroupsCell" id="18M-3k-HaG" customClass="MyGroupsTableViewCell" customModule="Vkontakte" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="414" height="44.5"/>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="MyGroupsCell" rowHeight="54" translatesAutoresizingMaskIntoConstraints="NO" id="18M-3k-HaG" customClass="MyGroupsTableViewCell" customModule="Vkontakte" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="24.5" width="414" height="54"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="18M-3k-HaG" id="wcl-kE-9Hv">
-                                            <rect key="frame" x="0.0" y="0.0" width="414" height="44.5"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="54"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group's Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="56I-l8-pqE">
-                                                    <rect key="frame" x="20" y="0.0" width="324" height="44.5"/>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="56I-l8-pqE">
+                                                    <rect key="frame" x="20" y="-3" width="324" height="44"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y12-m5-yO9" customClass="AvatarView" customModule="Vkontakte" customModuleProvider="target">
-                                                    <rect key="frame" x="354" y="2" width="40" height="40.5"/>
+                                                <view contentMode="scaleToFill" id="y12-m5-yO9" customClass="AvatarView" customModule="Vkontakte" customModuleProvider="target">
+                                                    <rect key="frame" x="351" y="2" width="42" height="39"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="40" id="STi-T5-YJP"/>
                                                         <constraint firstAttribute="height" constant="40" id="nnR-MF-6gJ"/>
                                                     </constraints>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="STi-T5-YJP"/>
+                                                            <exclude reference="nnR-MF-6gJ"/>
+                                                        </mask>
+                                                    </variation>
                                                 </view>
                                             </subviews>
                                             <constraints>
@@ -366,7 +376,20 @@
                                                 <constraint firstItem="56I-l8-pqE" firstAttribute="leading" secondItem="wcl-kE-9Hv" secondAttribute="leading" constant="20" symbolic="YES" id="hxU-Wj-xQW"/>
                                                 <constraint firstItem="y12-m5-yO9" firstAttribute="leading" secondItem="56I-l8-pqE" secondAttribute="trailing" constant="10" id="v0d-28-1aU"/>
                                             </constraints>
+                                            <variation key="default">
+                                                <mask key="constraints">
+                                                    <exclude reference="CtY-rd-tK2"/>
+                                                    <exclude reference="Gyy-fM-56a"/>
+                                                    <exclude reference="Wph-hF-jNs"/>
+                                                    <exclude reference="hxU-Wj-xQW"/>
+                                                    <exclude reference="1V2-FV-NHr"/>
+                                                    <exclude reference="T9S-KH-trQ"/>
+                                                    <exclude reference="csD-1S-47e"/>
+                                                    <exclude reference="v0d-28-1aU"/>
+                                                </mask>
+                                            </variation>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <connections>
                                             <outlet property="groupsName" destination="56I-l8-pqE" id="zmh-lG-HM0"/>
                                             <outlet property="myGroupsLogoView" destination="y12-m5-yO9" id="Xue-1M-O2I"/>
@@ -457,26 +480,41 @@
                                             <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="rays" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="6yn-VD-s0v">
-                                                    <rect key="frame" x="45" y="44.5" width="40" height="40.5"/>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="rays" catalog="system" id="6yn-VD-s0v">
+                                                    <rect key="frame" x="45" y="45" width="40" height="40"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="40" id="NP0-er-fq6"/>
                                                         <constraint firstAttribute="height" constant="40" id="mf3-mJ-vB7"/>
                                                     </constraints>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="NP0-er-fq6"/>
+                                                            <exclude reference="mf3-mJ-vB7"/>
+                                                        </mask>
+                                                    </variation>
                                                 </imageView>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e8c-gZ-AHq">
                                                     <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.19799622794650248" colorSpace="custom" customColorSpace="sRGB"/>
                                                 </imageView>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3F2-mb-k4B" customClass="LikeControl" customModule="Vkontakte" customModuleProvider="target">
+                                                <view contentMode="scaleToFill" id="3F2-mb-k4B" customClass="LikeControl" customModule="Vkontakte" customModuleProvider="target">
                                                     <rect key="frame" x="0.0" y="110" width="130" height="20"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="20" id="mOb-sf-b1J"/>
                                                     </constraints>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="mOb-sf-b1J"/>
+                                                        </mask>
+                                                    </variation>
                                                 </view>
                                             </subviews>
+                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <color key="tintColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <constraints>
                                                 <constraint firstItem="6yn-VD-s0v" firstAttribute="centerY" secondItem="DSz-zd-MRq" secondAttribute="centerY" id="J53-cm-mrS"/>
@@ -485,10 +523,21 @@
                                                 <constraint firstItem="6yn-VD-s0v" firstAttribute="centerX" secondItem="DSz-zd-MRq" secondAttribute="centerX" id="R3h-XO-nIQ"/>
                                                 <constraint firstAttribute="trailing" secondItem="3F2-mb-k4B" secondAttribute="trailing" id="eNO-dJ-95K"/>
                                             </constraints>
+                                            <variation key="default">
+                                                <mask key="constraints">
+                                                    <exclude reference="J53-cm-mrS"/>
+                                                    <exclude reference="R3h-XO-nIQ"/>
+                                                    <exclude reference="KzH-MN-cr0"/>
+                                                    <exclude reference="Nwc-Kd-oEL"/>
+                                                    <exclude reference="eNO-dJ-95K"/>
+                                                </mask>
+                                            </variation>
                                         </collectionViewCellContentView>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <size key="customSize" width="130" height="130"/>
                                         <connections>
                                             <outlet property="likeConrolView" destination="3F2-mb-k4B" id="5bI-D6-nwY"/>
+                                            <outlet property="loadIcon" destination="6yn-VD-s0v" id="wLy-o6-V53"/>
                                             <outlet property="photo" destination="e8c-gZ-AHq" id="DWf-RI-04F"/>
                                         </connections>
                                     </collectionViewCell>
@@ -575,7 +624,7 @@
                                 <color key="backgroundColor" systemColor="secondarySystemFillColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="newsCell" id="PL1-bX-vgc">
-                                        <rect key="frame" x="0.0" y="28" width="414" height="44"/>
+                                        <rect key="frame" x="0.0" y="24.5" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="PL1-bX-vgc" id="pYD-pB-YMX">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
@@ -612,18 +661,21 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="I4e-eo-ecx">
-                                <rect key="frame" x="0.0" y="144" width="414" height="752"/>
+                                <rect key="frame" x="0.0" y="139" width="414" height="757"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                <color key="sectionIndexBackgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="MyFriendsCell" rowHeight="44" id="Gdd-mi-TQI" customClass="MyFriendsCell" customModule="Vkontakte" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="414" height="44"/>
+                                        <rect key="frame" x="0.0" y="24.5" width="414" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="Gdd-mi-TQI" id="3LP-ys-hlN">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lhU-3t-5LF">
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="lhU-3t-5LF">
                                                     <rect key="frame" x="20" y="2" width="326" height="40"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+                                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     <constraints>
                                                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="326" id="0jM-wt-NBL"/>
                                                         <constraint firstAttribute="height" constant="40" id="vFr-oU-Gl4"/>
@@ -631,9 +683,16 @@
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="0jM-wt-NBL"/>
+                                                            <exclude reference="vFr-oU-Gl4"/>
+                                                        </mask>
+                                                    </variation>
                                                 </label>
-                                                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bk1-iF-23H" customClass="AvatarView" customModule="Vkontakte" customModuleProvider="target">
+                                                <view contentMode="scaleToFill" id="bk1-iF-23H" customClass="AvatarView" customModule="Vkontakte" customModuleProvider="target">
                                                     <rect key="frame" x="354" y="2" width="40" height="40"/>
+                                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <constraints>
                                                         <constraint firstAttribute="height" constant="40" id="YIb-kM-nIy"/>
@@ -642,8 +701,15 @@
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="image" keyPath="image" value="none"/>
                                                     </userDefinedRuntimeAttributes>
+                                                    <variation key="default">
+                                                        <mask key="constraints">
+                                                            <exclude reference="YIb-kM-nIy"/>
+                                                            <exclude reference="jDU-36-9WG"/>
+                                                        </mask>
+                                                    </variation>
                                                 </view>
                                             </subviews>
+                                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="bk1-iF-23H" secondAttribute="trailing" constant="20" symbolic="YES" id="06f-xn-GS9"/>
                                                 <constraint firstAttribute="bottom" secondItem="bk1-iF-23H" secondAttribute="bottom" constant="2" id="46d-Ei-TaS"/>
@@ -655,7 +721,21 @@
                                                 <constraint firstAttribute="bottom" secondItem="lhU-3t-5LF" secondAttribute="bottom" constant="2" id="bjw-on-0S9"/>
                                                 <constraint firstItem="bk1-iF-23H" firstAttribute="leading" secondItem="lhU-3t-5LF" secondAttribute="trailing" constant="8" symbolic="YES" id="rih-CH-ZZy"/>
                                             </constraints>
+                                            <variation key="default">
+                                                <mask key="constraints">
+                                                    <exclude reference="8lX-eV-OQi"/>
+                                                    <exclude reference="NuP-m9-5bc"/>
+                                                    <exclude reference="ReI-gU-ClJ"/>
+                                                    <exclude reference="bjw-on-0S9"/>
+                                                    <exclude reference="06f-xn-GS9"/>
+                                                    <exclude reference="46d-Ei-TaS"/>
+                                                    <exclude reference="A9s-oU-HbN"/>
+                                                    <exclude reference="BeB-pz-0sC"/>
+                                                    <exclude reference="rih-CH-ZZy"/>
+                                                </mask>
+                                            </variation>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <connections>
                                             <outlet property="friendAvatarView" destination="bk1-iF-23H" id="sde-E0-sIo"/>
                                             <outlet property="friendNameLabel" destination="lhU-3t-5LF" id="iPv-IC-e7Q"/>
@@ -665,7 +745,8 @@
                                 </prototypes>
                             </tableView>
                             <searchBar contentMode="redraw" placeholder="Поиск" showsCancelButton="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gO4-He-Zdi">
-                                <rect key="frame" x="0.0" y="88" width="414" height="56"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="51"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <textInputTraits key="textInputTraits" enablesReturnKeyAutomatically="YES"/>
                             </searchBar>
                         </subviews>
@@ -722,7 +803,7 @@
                             <tableViewSection id="2aT-xr-hvk">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="zbU-gs-gTL">
-                                        <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                                        <rect key="frame" x="0.0" y="24.5" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zbU-gs-gTL" id="7dd-dL-EB2">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
@@ -748,7 +829,7 @@
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="xdm-gV-flj">
-                                        <rect key="frame" x="0.0" y="71.5" width="414" height="43.5"/>
+                                        <rect key="frame" x="0.0" y="68" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="xdm-gV-flj" id="Kuk-LQ-WpD">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>

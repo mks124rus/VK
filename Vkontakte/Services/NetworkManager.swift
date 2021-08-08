@@ -33,7 +33,7 @@ class NetworkManager {
         urlComponents.path = "/method/friends.get"
         urlComponents.queryItems = [
             URLQueryItem(name: "access_token", value: token),
-            URLQueryItem(name: "fields", value: "photo_200"),
+            URLQueryItem(name: "fields", value: "photo_50"),
             URLQueryItem(name: "v", value: "5.130")
         ]
         
