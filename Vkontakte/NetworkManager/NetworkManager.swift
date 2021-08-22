@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 import SwiftyJSON
+import PromiseKit
 
 class NetworkManager {
     
@@ -58,7 +59,7 @@ class NetworkManager {
     }
     
     //новости
-    func loadNewsFeed(token: String, completion: ((Result<[News], Error>) -> Void)? = nil){
+    func loadNewsFeed(token: String, completion: ((Swift.Result<[News], Error>) -> Void)? = nil){
 
             let baseURL = "https://api.vk.com"
             let path = "/method/newsfeed.get"
@@ -123,7 +124,7 @@ class NetworkManager {
     }
     
     //фото друзей
-    func loadFriendPhotos(userID: String, completion: ((Result<[Photo], Error>) -> Void)? = nil){
+    func loadFriendPhotos(userID: String, completion: ((Swift.Result<[Photo], Error>) -> Void)? = nil){
         let baseURL = "https://api.vk.com"
         let path = "/method/photos.getAll"
         
@@ -151,7 +152,7 @@ class NetworkManager {
         }
     }
     //список друзей
-    func loadFriends(completion: ((Result<[User], Error>) -> Void)? = nil){
+    func loadFriends(completion: ((Swift.Result<[User], Error>) -> Void)? = nil){
         let baseURL = "https://api.vk.com"
         let path = "/method/friends.get"
         
@@ -191,8 +192,37 @@ class NetworkManager {
         return AF.request(baseURL + path, method: .get, parameters: params)
     }
     
+    //promise
+    func loadGroupsPromise() -> Promise<[Group]>{
+        
+        let baseURL = "https://api.vk.com"
+        let path = "/method/groups.get"
+        
+        let params: Parameters = [
+            "access_token": "\(self.token ?? "")",
+            "extended": 1,
+            "v" : "5.130"
+        ]
+        
+        let promise = Promise<[Group]> { resolve in
+            AF.request(baseURL + path, method: .get, parameters: params)
+                .responseJSON { response in
+                switch response.result {
+                case .success(let data):
+                    let json = JSON(data)
+                    let groupsJSON = json["response","items"].arrayValue
+                    let groups = groupsJSON.map { Group(from: $0) }
+                    resolve.fulfill(groups)
+                case .failure(let error):
+                    resolve.reject(error)
+                }
+            }
+        }
+        return promise
+    }
+    
     //список групп
-    func loadGroups(completion: ((Result<[Group], Error>) -> Void)? = nil){
+    func loadGroups(completion: ((Swift.Result<[Group], Error>) -> Void)? = nil){
         let baseURL = "https://api.vk.com"
         let path = "/method/groups.get"
         

@@ -27,6 +27,7 @@ class MyGroupsViewController: UIViewController {
     let cellID = "MyGroupsCell"
     
     private var realmManager = RealmManager.shared
+    private var networkManager = NetworkManager.shared
     
     private var groupResults: Results<Group>? {
         let results: Results<Group>? = realmManager?.getObjects()
@@ -38,7 +39,8 @@ class MyGroupsViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.loadData()
+//        self.loadData()
+        self.loadDataPromise()
         self.setGroupsNotification()
 
     }
@@ -53,11 +55,13 @@ class MyGroupsViewController: UIViewController {
     }
     
     @objc func refresh(_ sender: UIRefreshControl) {
-        DispatchQueue.main.async {
-            self.loadData() { [weak self] in
-                self?.myGroupsTableView.refreshControl?.endRefreshing()
-            }
-        }
+        self.loadDataPromise()
+        self.myGroupsTableView.refreshControl?.endRefreshing()
+//        DispatchQueue.main.async {
+//            self.loadData() { [weak self] in
+//                self?.myGroupsTableView.refreshControl?.endRefreshing()
+//            }
+//        }
     }
     
     private func loadData(completion: (() -> Void)? = nil){
@@ -66,15 +70,24 @@ class MyGroupsViewController: UIViewController {
             
             switch result {
             case .success(let groupsArray):
-                DispatchQueue.main.async {
                     try? self?.realmManager?.add(objects: groupsArray)
                     completion?()
-                }
             case .failure(let error):
                 print(error.localizedDescription)
             }
             
         }
+    }
+    
+    private func loadDataPromise(completion: (() -> Void)? = nil){
+        self.networkManager.loadGroupsPromise()
+            .done {[weak self] (groups) in
+                try self?.realmManager?.add(objects: groups)
+                completion?()
+            }
+            .catch { (error) in
+                print(error.localizedDescription)
+            }
     }
     
     fileprivate func setGroupsNotification() {
