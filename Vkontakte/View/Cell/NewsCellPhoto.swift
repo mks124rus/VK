@@ -14,7 +14,7 @@ class NewsCellPhoto: UITableViewCell {
     
     @IBOutlet weak private var logoView: AvatarView!
     @IBOutlet weak private var nameLabel: UILabel!
-    @IBOutlet weak private var dateLabel: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var textPostLabel: UILabel!
     @IBOutlet weak private var photoPost: UIImageView!
     @IBOutlet weak private var photoPostHeght: NSLayoutConstraint!
@@ -25,7 +25,14 @@ class NewsCellPhoto: UITableViewCell {
     @IBOutlet weak private var repostCountLabel: UILabel!
     
     @IBOutlet weak var showAllTextButton: UIButton!
-    private var dateFormatter = NewsController.dateFormatter
+    
+    @IBOutlet weak var topView: UIView!
+    @IBOutlet weak var stackView: UIStackView!
+    @IBOutlet weak var bottomView: UIView!
+    
+    
+    
+    
     private let photoService = PhotoService.instance
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -92,9 +99,6 @@ class NewsCellPhoto: UITableViewCell {
               let photoURL = data.photoURL else { return }
 
         self.nameLabel.text = data.name
-        let date = Date(timeIntervalSince1970: TimeInterval(data.date))
-        self.dateLabel.text = self.dateFormatter.string(from: date)
-        
         self.textPostLabel.text = data.text
         
         if textPostLabel.text!.count > 255 {

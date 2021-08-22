@@ -11,7 +11,7 @@ class NewsCellText: UITableViewCell {
 
     @IBOutlet weak var logoView: AvatarView!
     @IBOutlet weak private var nameLabel: UILabel!
-    @IBOutlet weak private var dateLabel: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
     
 
     @IBOutlet weak private var textPostLabel: UILabel!
@@ -28,7 +28,6 @@ class NewsCellText: UITableViewCell {
     
     static let identifier = "NewsCellText"
     
-    private var dateFormatter = NewsController.dateFormatter
     private var photoService = PhotoService.instance
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -70,8 +69,6 @@ class NewsCellText: UITableViewCell {
     
     public func setupCell(data: News){
         guard let stringURL = data.avatar else {return}
-        let date = Date(timeIntervalSince1970: TimeInterval(data.date))
-        self.dateLabel.text = self.dateFormatter.string(from: date)
         self.nameLabel.text = data.name
         self.textPostLabel.text = data.text
 //        self.setAndCacheLogo(data: data)

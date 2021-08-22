@@ -14,11 +14,13 @@ class NewsController: UIViewController {
     private var post:[News] = []
     private var token = NetworkManager.shared.token
     
-    static var dateFormatter: DateFormatter = {
+    private let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy HH:mm"
         return dateFormatter
     }()
+    
+    private var dateTextCahce: [IndexPath: String] = [:]
     
     private lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
@@ -75,6 +77,16 @@ class NewsController: UIViewController {
         print(indx)
     }
     
+    private func getDateCellText(for indexPath: IndexPath, andTimestamp timestamp: Int ) -> String {
+        if let stringText = self.dateTextCahce[indexPath]{
+            return stringText
+        } else {
+            let date = Date(timeIntervalSince1970: TimeInterval(timestamp))
+            let stringDate = self.dateFormatter.string(from: date)
+            self.dateTextCahce[indexPath] = stringDate
+            return stringDate
+        }
+    }
 }
 
 extension NewsController: UITableViewDelegate {
@@ -108,13 +120,14 @@ extension NewsController: UITableViewDataSource {
         if data.photoURL != nil{
             guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCellPhoto.identifier, for: indexPath) as? NewsCellPhoto else { return UITableViewCell()}
             cell.setupCell(data: data)
+            cell.dateLabel.text = self.getDateCellText(for: indexPath, andTimestamp: data.date)
             cell.showAllTextButton.addTarget(self, action: #selector(showAllText(_:)), for: .touchUpInside)
             return cell
             
         } else {
             
             guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCellText.identifier, for: indexPath) as? NewsCellText else { return UITableViewCell()}
-
+            cell.dateLabel.text = self.getDateCellText(for: indexPath, andTimestamp: data.date)
             cell.setupCell(data: data)
             return cell
         }

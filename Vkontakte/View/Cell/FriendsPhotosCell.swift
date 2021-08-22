@@ -11,6 +11,7 @@ class FriendsPhotosCell: UICollectionViewCell {
     
     @IBOutlet weak var likeConrolView: LikeControl!
     @IBOutlet weak var photo: UIImageView!
+    @IBOutlet weak var loadIcon: UIImageView!
     
     private var photoService = PhotoService.instance
     override func prepareForReuse() {
@@ -45,6 +46,29 @@ class FriendsPhotosCell: UICollectionViewCell {
 //            }
 //        }
 //    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.frameLikeControlView()
+        self.frameLoadIcon()
+    }
+    
+    private func frameLoadIcon(){
+        let sideIconLenght: CGFloat = 40
+        let size = CGSize(width: sideIconLenght, height: sideIconLenght)
+        let origin = CGPoint(x: bounds.midX - sideIconLenght/2, y: bounds.midY - sideIconLenght/2)
+        self.loadIcon.frame = CGRect(origin: origin, size: size)
+    }
+    
+    private func frameLikeControlView(){
+        let width = bounds.width
+        let height: CGFloat = 20.0
+        let size = CGSize(width: width, height: height)
+        let originX = bounds.minX
+        let originY = bounds.maxY - height
+        let origin = CGPoint(x: originX, y: originY)
+        self.likeConrolView.frame = CGRect(origin: origin, size: size)
+    }
     
     public func setupCell(data: Photo, cell: FriendsPhotosCell, indexPath: IndexPath){
         let stringURL = data.url

@@ -9,7 +9,12 @@ import UIKit
 
 class MyGroupsTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var groupsName: UILabel!
+    @IBOutlet weak var groupsName: UILabel!{
+        didSet{
+            groupsName.font = UIFont.systemFont(ofSize: 18)
+            groupsName.lineBreakMode = .byWordWrapping
+        }
+    }
     @IBOutlet weak var myGroupsLogoView: AvatarView!
     
     private let photoService = PhotoService.instance
@@ -50,6 +55,29 @@ class MyGroupsTableViewCell: UITableViewCell {
 //            }
 //        }
 //    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        self.frameGroupsName()
+        self.frameMyGroupsLogoView()
+    }
+    
+    let insets: CGFloat = 20.0
+    
+    private func frameGroupsName(){
+        let size = CGSize(width: bounds.width - self.insets * 3 - self.myGroupsLogoView.frame.width, height: bounds.height)
+        let originX = bounds.minX + self.insets
+        let originY = bounds.midY - size.height/2
+        let origin = CGPoint(x: originX, y: originY)
+        self.groupsName.frame = CGRect(origin: origin, size: size)
+    }
+    
+    private func frameMyGroupsLogoView(){
+        let avatarSideLenght: CGFloat = 45
+        let size = CGSize(width: avatarSideLenght, height: avatarSideLenght)
+        let origin = CGPoint(x: bounds.maxX - avatarSideLenght - insets, y: bounds.midY - avatarSideLenght/2)
+        self.myGroupsLogoView.frame = CGRect(origin: origin, size: size)
+    }
     
     public func setupCell(data: Group){
         self.myGroupsLogoView.image = nil
