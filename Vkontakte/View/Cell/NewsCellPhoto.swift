@@ -26,7 +26,7 @@ class NewsCellPhoto: UITableViewCell {
     
     @IBOutlet weak var showAllTextButton: UIButton!
     private var dateFormatter = NewsController.dateFormatter
-    
+    private let photoService = PhotoService.instance
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -50,45 +50,47 @@ class NewsCellPhoto: UITableViewCell {
         self.repostCountLabel.text = nil
     }
     
-    private func setAndCacheLogo(data: News){
-        let imageCache = ImageCache.instance
-        guard let avatarURL = data.avatar else {return}
-
-        if let data = imageCache.cache[avatarURL] {
-            self.logoView.image = UIImage(data: data)
-        } else {
-            DispatchQueue.global(qos: .userInteractive).async {
-                let data: Data = NetworkManager.shared.getImageData(stringURL: avatarURL)
-                DispatchQueue.main.async {
-                    imageCache.cache[avatarURL] = data
-                    self.logoView.image = UIImage(data: data)
-                }
-            }
-        }
-    }
+//    private func setAndCacheLogo(data: News){
+//        let imageCache = ImageCache.instance
+//        guard let avatarURL = data.avatar else {return}
+//
+//        if let data = imageCache.cache[avatarURL] {
+//            self.logoView.image = UIImage(data: data)
+//        } else {
+//            DispatchQueue.global(qos: .userInteractive).async {
+//                let data: Data = NetworkManager.shared.getImageData(stringURL: avatarURL)
+//                DispatchQueue.main.async {
+//                    imageCache.cache[avatarURL] = data
+//                    self.logoView.image = UIImage(data: data)
+//                }
+//            }
+//        }
+//    }
     
-    private func setAndCachePhotoPost(data: News){
-        let imageCache = ImageCache.instance
-        guard let photoPostURL = data.photoURL else {return}
-        
-        if let data = imageCache.cache[photoPostURL] {
-            self.photoPost.image = UIImage(data: data)
-        } else {
-            DispatchQueue.global(qos: .userInteractive).async {
-                let data: Data = NetworkManager.shared.getImageData(stringURL: photoPostURL)
-                DispatchQueue.main.async {
-                    imageCache.cache[photoPostURL] = data
-                    self.photoPost.image = UIImage(data: data)
-                }
-            }
-        }
-    }
+//    private func setAndCachePhotoPost(data: News){
+//        let imageCache = ImageCache.instance
+//        guard let photoPostURL = data.photoURL else {return}
+//
+//        if let data = imageCache.cache[photoPostURL] {
+//            self.photoPost.image = UIImage(data: data)
+//        } else {
+//            DispatchQueue.global(qos: .userInteractive).async {
+//                let data: Data = NetworkManager.shared.getImageData(stringURL: photoPostURL)
+//                DispatchQueue.main.async {
+//                    imageCache.cache[photoPostURL] = data
+//                    self.photoPost.image = UIImage(data: data)
+//                }
+//            }
+//        }
+//    }
     
-    func setupCell(data: News, indexPath: IndexPath){
+    public func setupCell(data: News){
 
-        guard let photoWidth = data.photoWidth else {return}
-        guard let photoHeiht = data.photoHeight else {return}
-        
+        guard let photoWidth = data.photoWidth,
+              let photoHeiht = data.photoHeight,
+              let logoURL = data.avatar,
+              let photoURL = data.photoURL else { return }
+
         self.nameLabel.text = data.name
         let date = Date(timeIntervalSince1970: TimeInterval(data.date))
         self.dateLabel.text = self.dateFormatter.string(from: date)
@@ -102,11 +104,22 @@ class NewsCellPhoto: UITableViewCell {
             textPostLabel.numberOfLines = 0
             showAllTextButton.isHidden = true
         }
-        
         self.photoPostHeght.constant = CGFloat(data.photoHeight ?? 0)
-        self.setAndCacheLogo(data: data)
-        self.setAndCachePhotoPost(data: data)
         
+        photoService.photo(stringURL: logoURL) { [weak self](image) in
+            DispatchQueue.main.async {
+                self?.logoView.image = image
+            }
+        }
+        photoService.photo(stringURL: photoURL) { [weak self](image) in
+            DispatchQueue.main.async {
+                self?.photoPost.image = image
+            }
+        }
+
+//        self.setAndCacheLogo(data: data)
+//        self.setAndCachePhotoPost(data: data)
+//
         self.likeCountLabel.text = String(data.likesCount)
         self.commentsCountLabel.text = String(data.commentsCount)
         self.repostCountLabel.text = String(data.repostsCount)

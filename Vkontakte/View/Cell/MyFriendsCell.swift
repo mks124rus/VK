@@ -11,6 +11,8 @@ class MyFriendsCell: UITableViewCell {
     @IBOutlet weak private var friendNameLabel: UILabel!
     @IBOutlet weak private var friendAvatarView: AvatarView!
     
+    private let photoService = PhotoService.instance
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         // Initialization code
@@ -28,32 +30,31 @@ class MyFriendsCell: UITableViewCell {
         
     }
     
-    private func setAndCacheLogo(data: User){
-        let imageCache = ImageCache.instance
-        let avatarURL = data.avatar
-
-        if let data = imageCache.cache[avatarURL] {
-            self.friendAvatarView.image = UIImage(data: data)
-        } else {
-            DispatchQueue.global(qos: .userInteractive).async {
-                let data: Data = NetworkManager.shared.getImageData(stringURL: avatarURL)
-                DispatchQueue.main.async {
-                    imageCache.cache[avatarURL] = data
-                    self.friendAvatarView.image = UIImage(data: data)
-                }
-            }
-        }
-    }
+//    private func setAndCacheLogo(data: User){
+//        let imageCache = ImageCache.instance
+//        let avatarURL = data.avatar
+//
+//        if let data = imageCache.cache[avatarURL] {
+//            self.friendAvatarView.image = UIImage(data: data)
+//        } else {
+//            DispatchQueue.global(qos: .userInteractive).async {
+//                let data: Data = NetworkManager.shared.getImageData(stringURL: avatarURL)
+//                DispatchQueue.main.async {
+//                    imageCache.cache[avatarURL] = data
+//                    self.friendAvatarView.image = UIImage(data: data)
+//                }
+//            }
+//        }
+//    }
     
-    func setupCell(data: [Section], cell: MyFriendsCell, indexPath: IndexPath){
-        let data = data[indexPath.section].names[indexPath.row]
-        let name = data.firstLastName
-        self.friendAvatarView.image = nil
-        cell.tag = indexPath.row
-        self.friendNameLabel?.text = name
+    public func setupCell(data: User){
         
-        if cell.tag == indexPath.row{
-            self.setAndCacheLogo(data: data)
+        self.friendNameLabel?.text = data.firstLastName
+//      self.setAndCacheLogo(data: data)
+        photoService.photo(stringURL: data.avatar) {[weak self] (image) in
+            DispatchQueue.main.async {
+                self?.friendAvatarView.image = image
+            }
         }
     }
     

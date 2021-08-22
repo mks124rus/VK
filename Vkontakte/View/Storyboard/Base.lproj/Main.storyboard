@@ -721,8 +721,34 @@
                         <sections>
                             <tableViewSection id="2aT-xr-hvk">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="xdm-gV-flj">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="zbU-gs-gTL">
                                         <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="zbU-gs-gTL" id="7dd-dL-EB2">
+                                            <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="oQk-wl-J2J">
+                                                    <rect key="frame" x="143" y="6" width="128" height="32"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                                    <state key="normal" title="Очистить кэш">
+                                                        <color key="titleColor" systemColor="labelColor"/>
+                                                    </state>
+                                                    <connections>
+                                                        <action selector="clearCache:" destination="I2R-YV-Gi9" eventType="touchUpInside" id="AeF-h8-ro0"/>
+                                                    </connections>
+                                                </button>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="oQk-wl-J2J" firstAttribute="top" secondItem="7dd-dL-EB2" secondAttribute="top" constant="6" id="2gX-Gw-u77"/>
+                                                <constraint firstItem="oQk-wl-J2J" firstAttribute="centerY" secondItem="7dd-dL-EB2" secondAttribute="centerY" id="4hg-Ul-zI4"/>
+                                                <constraint firstItem="oQk-wl-J2J" firstAttribute="centerX" secondItem="7dd-dL-EB2" secondAttribute="centerX" id="PFW-oQ-ltl"/>
+                                                <constraint firstAttribute="bottom" secondItem="oQk-wl-J2J" secondAttribute="bottom" constant="6" id="ZVq-z8-e92"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="xdm-gV-flj">
+                                        <rect key="frame" x="0.0" y="71.5" width="414" height="43.5"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="xdm-gV-flj" id="Kuk-LQ-WpD">
                                             <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
@@ -760,6 +786,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Настройки" id="m9p-KS-S8T"/>
                     <connections>
+                        <outlet property="clearCacheButton" destination="oQk-wl-J2J" id="k2X-qu-Eg9"/>
                         <outlet property="logOutButton" destination="7I4-Ey-kOr" id="c8r-Vx-zuk"/>
                     </connections>
                 </tableViewController>
@@ -798,6 +825,9 @@
         <namedColor name="AccentColor">
             <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="secondarySystemFillColor">
             <color red="0.47058823529411764" green="0.47058823529411764" blue="0.50196078431372548" alpha="0.16" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>

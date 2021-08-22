@@ -126,6 +126,7 @@
 				D427737126249EE300792D9E /* RealmManager.swift */,
 				D4E448D626087F870003D663 /* NetworkManager.swift */,
 				D44FBFAA266F5BBC00D8AC4F /* PhotoService.swift */,
+				D428FEBD2652C609009C2E89 /* ImageCache.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -242,7 +243,6 @@
 				D4D9876625CC5BA500E5D611 /* Assets.xcassets */,
 				D4D9876825CC5BA500E5D611 /* LaunchScreen.storyboard */,
 				D4D9876B25CC5BA500E5D611 /* Info.plist */,
-				D428FEBD2652C609009C2E89 /* ImageCache.swift */,
 			);
 			path = Vkontakte;
 			sourceTree = "<group>";

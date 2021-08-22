@@ -256,8 +256,8 @@ extension MyFriendsController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: self.myFriendsCellIdentifier, for: indexPath) as? MyFriendsCell else {return UITableViewCell()}
-        
-        cell.setupCell(data: self.dataUserFiltered, cell: cell, indexPath: indexPath)
+        let data = self.dataUserFiltered[indexPath.section].names[indexPath.row]
+        cell.setupCell(data: data)
 
         return cell
     }
