@@ -8,8 +8,13 @@
 import UIKit
 import RealmSwift
 
+protocol ExpandPostTextLabel: AnyObject{
+    func expandedText(button: UIButton, indexPath: IndexPath)
+}
+
 class NewsCellPhoto: UITableViewCell {
     
+    weak var delegate: ExpandPostTextLabel?
     static let identifier = "NewsCellPhoto"
     
     @IBOutlet weak private var logoView: AvatarView!
@@ -30,8 +35,8 @@ class NewsCellPhoto: UITableViewCell {
     @IBOutlet weak var stackView: UIStackView!
     @IBOutlet weak var bottomView: UIView!
     
-    
-    
+    var isExpanded = Bool()
+    var indexPath = IndexPath()
     
     private let photoService = PhotoService.instance
     override func awakeFromNib() {
@@ -101,13 +106,8 @@ class NewsCellPhoto: UITableViewCell {
         self.nameLabel.text = data.name
         self.textPostLabel.text = data.text
         
-        if textPostLabel.text!.count > 255 {
-            textPostLabel.numberOfLines = 10
-            showAllTextButton.isHidden = false
-        } else {
-            textPostLabel.numberOfLines = 0
-            showAllTextButton.isHidden = true
-        }
+
+        
         self.photoPostHeght.constant = CGFloat(data.photoHeight ?? 0)
         
         photoService.photo(stringURL: logoURL) { [weak self](image) in
@@ -119,6 +119,15 @@ class NewsCellPhoto: UITableViewCell {
             DispatchQueue.main.async {
                 self?.photoPost.image = image
             }
+        }
+         
+        if textPostLabel.text!.count > 250 {
+            showAllTextButton.isHidden = false
+            showAllTextButton.setTitle("Показать полностью...", for: .normal)
+            textPostLabel.numberOfLines = 10
+            isExpanded = false
+        } else {
+            showAllTextButton.isHidden = true
         }
 
 //        self.setAndCacheLogo(data: data)
@@ -137,8 +146,30 @@ class NewsCellPhoto: UITableViewCell {
 
     }
     
-    @IBAction func showAllPostText(_ sender: UIButton) {
+    func expandPostText(){
+        if isExpanded == false {
+            textPostLabel.numberOfLines = 0
+            showAllTextButton.setTitle("Скрыть", for: .normal)
+            isExpanded = true
+        } else {
+            textPostLabel.numberOfLines = 10
+            showAllTextButton.setTitle("Показать полностью...", for: .normal)
+            isExpanded = false
+        }
     }
     
+    func configShowAllTextButton(indexPath: IndexPath){
+        showAllTextButton.tag = indexPath.row
+        self.indexPath = indexPath
+    }
     
+    @IBAction func showAllPostText(_ sender: UIButton) {
+        delegate?.expandedText(button: sender, indexPath: indexPath)
+        print("tap")
+    }
+    
+
+
 }
+
+

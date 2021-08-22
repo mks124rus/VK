@@ -10,12 +10,7 @@ import RealmSwift
 import SDWebImage
 class FriendsPhotosController: UIViewController{
     
-    @IBOutlet weak var friendsPhotosColletctionView: UICollectionView!{
-        didSet{
-            self.friendsPhotosColletctionView.alwaysBounceVertical = true
-            self.friendsPhotosColletctionView.refreshControl? = refreshControl
-        }
-    }
+    @IBOutlet weak var friendsPhotosColletctionView: UICollectionView!
     @IBOutlet weak private var loadingView: UIView!
     @IBOutlet weak private var NoPhotoLabel: UILabel!{
         didSet{
@@ -64,18 +59,23 @@ class FriendsPhotosController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.friendsPhotosColletctionView.alwaysBounceVertical = true
+        self.friendsPhotosColletctionView.refreshControl? = refreshControl
+        self.friendsPhotosColletctionView.addSubview(refreshControl)
         self.friendsPhotosColletctionView.delegate = self
         self.friendsPhotosColletctionView.dataSource = self
         
         self.view.addSubview(self.previewPhotoImageView)
         self.previewPhotoGesture()
-        self.loadData()
         self.setPhotosNotification()
         
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        if let photos = photoResults, photos.isEmpty {
+            self.loadData()
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -93,10 +93,10 @@ class FriendsPhotosController: UIViewController{
     }
     
     @objc func refresh(_ sender: UIRefreshControl) {
-        self.loadData() { [weak self] in
-            self?.friendsPhotosColletctionView.refreshControl?.endRefreshing()
+        self.refreshControl.beginRefreshing()
+        self.loadData() {[weak self] in
+            self?.refreshControl.endRefreshing()
         }
-        
     }
     
     fileprivate func setPhotosNotification() {
@@ -155,13 +155,16 @@ class FriendsPhotosController: UIViewController{
             [weak self] (result) in
             switch result {
             case .success(let photoArray):
-                //                  self?.dataPhoto = photoArray
-                try? self?.realmManager?.add(objects: photoArray)
-                //                    self?.friendsPhotosColletctionView.reloadData()
+                DispatchQueue.main.async {
+                    try? self?.realmManager?.add(objects: photoArray)
+                }
+                self?.refreshControl.attributedTitle = NSAttributedString(string: "")
+                self?.refreshControl.endRefreshing()
                 completion?()
-                
             case .failure(let error):
                 print(error.localizedDescription)
+                self?.refreshControl.attributedTitle = NSAttributedString(string: "Ошибка загрузки")
+                self?.refreshControl.endRefreshing()
             }
         }
     }
@@ -195,9 +198,6 @@ extension FriendsPhotosController: UICollectionViewDelegate {
         self.setupPreviewPhotoImageView(stringURL: stringURL)
     }
 }
-
-
-
 
 extension FriendsPhotosController: UICollectionViewDataSource {
     
@@ -613,9 +613,11 @@ extension FriendsPhotosController{
 
                     }else{
                         self.currentPhoto += 1
-                        self.swipeLeftAnimationPreviewPhoto()
+                        
                         DispatchQueue.main.async {
                             self.previewPhotoImageView.image = image
+                            self.swipeLeftAnimationPreviewPhoto()
+
                         }
                         print("else left", +self.currentPhoto)
                     }
@@ -633,9 +635,10 @@ extension FriendsPhotosController{
                     }else{
                         self.currentPhoto -= 1
                         print("else right", +self.currentPhoto)
-                        self.swipeRightAnimationPreviewPhoto()
+                        
                         DispatchQueue.main.async {
                             self.previewPhotoImageView.image = image
+                            self.swipeRightAnimationPreviewPhoto()
                         }
 
                     }

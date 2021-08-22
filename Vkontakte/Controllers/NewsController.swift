@@ -7,13 +7,16 @@
 
 import UIKit
 import Alamofire
-class NewsController: UIViewController {
-    
+class NewsController: UIViewController, ExpandPostTextLabel{
+
     @IBOutlet weak var newsTableView: UITableView!
+    
+    var nextFrom = ""
+    var isLoading = false
     
     private var post:[News] = []
     private var token = NetworkManager.shared.token
-    
+    private var newsCellPhoto = NewsCellPhoto()
     private let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy HH:mm"
@@ -25,20 +28,21 @@ class NewsController: UIViewController {
     private lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.tintColor = .lightGray
-        //        refreshControl.attributedTitle = NSAttributedString(string: "", attributes: [.font: UIFont.systemFont(ofSize: 12)])
+        refreshControl.attributedTitle = NSAttributedString(string: "", attributes: [.font: UIFont.systemFont(ofSize: 12)])
         refreshControl.addTarget(self, action: #selector(refresh(_:)), for: .valueChanged)
         return refreshControl
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.newsTableView.rowHeight = UITableView.automaticDimension
         self.loadData()
         self.newsTableView.dataSource = self
         self.newsTableView.delegate = self
         self.newsTableView.register(UINib(nibName: "NewsCellPhoto", bundle: nil), forCellReuseIdentifier: NewsCellPhoto.identifier)
         self.newsTableView.register(UINib(nibName: "NewsCellText", bundle: nil), forCellReuseIdentifier: NewsCellText.identifier)
         self.newsTableView.refreshControl = refreshControl
+        self.newsTableView.prefetchDataSource = self
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -55,26 +59,22 @@ class NewsController: UIViewController {
         guard let token = self.token else {
             return
         }
-        NetworkManager.shared.loadNewsFeed(token: token) {
-            [weak self] (result) in
+        NetworkManager.shared.loadNewsFeed(token: token, startFrom: nextFrom) {
+            [weak self] (result, startFrom) in
             switch result {
             case .success(let newsArray):
                 DispatchQueue.main.async {
                 self?.post = newsArray
                 self?.newsTableView.reloadData()
+                self?.refreshControl.attributedTitle = NSAttributedString(string: "")
                 completion?()
                 }
             case .failure(let error):
                 print(error.localizedDescription)
+                self?.refreshControl.attributedTitle = NSAttributedString(string: "Ошибка загрузки")
+                self?.refreshControl.endRefreshing()
             }
         }
-    }
-    
-    @objc func showAllText(_ sender: UIButton){
-        let ind = sender.tag
-        print(ind)
-        let indx = IndexPath(row: 0, section: ind)
-        print(indx)
     }
     
     private func getDateCellText(for indexPath: IndexPath, andTimestamp timestamp: Int ) -> String {
@@ -87,6 +87,51 @@ class NewsController: UIViewController {
             return stringDate
         }
     }
+}
+
+extension NewsController: UITableViewDataSourcePrefetching{
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        
+        guard let token = self.token else {
+            return
+        }
+        
+        // Выбираем максимальный номер секции, которую нужно будет отобразить в ближайшее время
+        guard let maxSection = indexPaths.map({$0.section}).max() else {return}
+        
+        // Проверяем,является ли эта секция одной из трех ближайших к концу
+        if maxSection > post.count - 3,
+           
+           // Убеждаемся, что мы уже не в процессе загрузки данных
+           !isLoading {
+            // Начинаем загрузку данных и меняем флаг isLoading
+            isLoading = true
+            NetworkManager.shared.loadNewsFeed(token: token, startFrom: nextFrom) { [weak self] result, next  in
+                guard let self = self else {return}
+                switch result {
+                case .success(let newsArray):
+                    self.post.append(contentsOf: newsArray)
+                    self.nextFrom = next
+                    self.newsTableView.reloadData()
+                    self.isLoading = false
+                case .failure(let error):
+                    print(error.localizedDescription)
+            }
+            }
+        }
+    }
+    
+    func expandedText(button: UIButton, indexPath: IndexPath) {
+        if let cell = newsTableView.cellForRow(at: indexPath) as? NewsCellPhoto{
+            newsTableView.beginUpdates()
+            cell.expandPostText()
+            newsTableView.endUpdates()
+        }
+    }
+    
+
+    
+    
 }
 
 extension NewsController: UITableViewDelegate {
@@ -120,8 +165,9 @@ extension NewsController: UITableViewDataSource {
         if data.photoURL != nil{
             guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCellPhoto.identifier, for: indexPath) as? NewsCellPhoto else { return UITableViewCell()}
             cell.setupCell(data: data)
+            cell.configShowAllTextButton(indexPath: indexPath)
+            cell.delegate = self
             cell.dateLabel.text = self.getDateCellText(for: indexPath, andTimestamp: data.date)
-            cell.showAllTextButton.addTarget(self, action: #selector(showAllText(_:)), for: .touchUpInside)
             return cell
             
         } else {

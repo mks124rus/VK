@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-class SaveToRealmOperation: Operation {
+class SaveToRealmUserOperation: Operation {
     
     override func main() {
         guard let parseUserData = dependencies.first as? ParseUserDataOperation else { return }
