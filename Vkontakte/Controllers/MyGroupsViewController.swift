@@ -28,11 +28,13 @@ class MyGroupsViewController: UIViewController {
     
     private var realmManager = RealmManager.shared
     private var networkManager = NetworkManager.shared
+    private let adapter = NetworkManagerAdapter()
     
     private var groupResults: Results<Group>? {
         let results: Results<Group>? = realmManager?.getObjects()
         return results?.sorted(byKeyPath: "name", ascending: true)
     }
+    private var groupsAdapter: [GroupAdapter]?
     
     private var groupsNotificationToken: NotificationToken?
     
@@ -40,22 +42,30 @@ class MyGroupsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 //        self.loadData()
-        self.loadDataPromise()
-        self.setGroupsNotification()
+//        self.loadDataPromise()
+//        self.setGroupsNotification()
+
 
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        adapter.getMyGroups { [weak self] groups in
+            self?.groupsAdapter = groups.sorted {$0.name < $1.name}
+            self?.myGroupsTableView.reloadData()
+        }
     }
     
     deinit {
-        self.groupsNotificationToken?.invalidate()
+//        self.groupsNotificationToken?.invalidate()
     }
     
     @objc func refresh(_ sender: UIRefreshControl) {
-        self.loadDataPromise()
+//        self.loadDataPromise()
+        adapter.getMyGroups { [weak self] groups in
+            self?.groupsAdapter = groups.sorted {$0.name < $1.name}
+            self?.myGroupsTableView.reloadData()
+        }
         self.myGroupsTableView.refreshControl?.endRefreshing()
 //        DispatchQueue.main.async {
 //            self.loadData() { [weak self] in
@@ -127,23 +137,25 @@ class MyGroupsViewController: UIViewController {
 extension MyGroupsViewController: UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.groupResults?.count ?? 0
+//        return self.groupResults?.count ?? 0
+        return self.groupsAdapter?.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellID, for: indexPath) as? MyGroupsTableViewCell else {return UITableViewCell()}
-        guard let data = groupResults?[indexPath.row] else {return UITableViewCell()}
+//        guard let data = groupResults?[indexPath.row] else {return UITableViewCell()}
+        guard let data = groupsAdapter?[indexPath.row] else {return UITableViewCell()}
             cell.setupCell(data: data)
         return cell
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            guard let myGroup = groupResults?[indexPath.row] else {
-                return
-                
-            }
-            try? realmManager?.delete(object: myGroup)
+//            guard let myGroup = groupResults?[indexPath.row] else {
+//                return
+//
+//            }
+//            try? realmManager?.delete(object: myGroup)
         }
     }
 }

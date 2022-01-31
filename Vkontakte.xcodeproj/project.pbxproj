@@ -11,6 +11,7 @@
 		D41581E02757878A0089F7FC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41581DF2757878A0089F7FC /* Extensions.swift */; };
 		D427737226249EE300792D9E /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D427737126249EE300792D9E /* RealmManager.swift */; };
 		D428FEBE2652C609009C2E89 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D428FEBD2652C609009C2E89 /* ImageCache.swift */; };
+		D42E77B227A869D10026975F /* NetworkManagerAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D42E77B127A869D10026975F /* NetworkManagerAdapter.swift */; };
 		D43B28872631C6D4003D8423 /* MyGroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43B28862631C6D4003D8423 /* MyGroupsViewController.swift */; };
 		D43B288A2631C703003D8423 /* MyGroupsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43B28892631C703003D8423 /* MyGroupsTableViewCell.swift */; };
 		D44112D225E6825A0074A97A /* FriendsPhotosController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D44112D125E6825A0074A97A /* FriendsPhotosController.swift */; };
@@ -58,6 +59,7 @@
 		D41581DF2757878A0089F7FC /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D427737126249EE300792D9E /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
 		D428FEBD2652C609009C2E89 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
+		D42E77B127A869D10026975F /* NetworkManagerAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManagerAdapter.swift; sourceTree = "<group>"; };
 		D43B28862631C6D4003D8423 /* MyGroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGroupsViewController.swift; sourceTree = "<group>"; };
 		D43B28892631C703003D8423 /* MyGroupsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGroupsTableViewCell.swift; sourceTree = "<group>"; };
 		D44112D125E6825A0074A97A /* FriendsPhotosController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendsPhotosController.swift; sourceTree = "<group>"; };
@@ -130,9 +132,18 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
+		D42E77B027A869540026975F /* Adapter */ = {
+			isa = PBXGroup;
+			children = (
+				D42E77B127A869D10026975F /* NetworkManagerAdapter.swift */,
+			);
+			path = Adapter;
+			sourceTree = "<group>";
+		};
 		D44FBFA9266F5B1F00D8AC4F /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				D42E77B027A869540026975F /* Adapter */,
 				D427737126249EE300792D9E /* RealmManager.swift */,
 				D4E448D626087F870003D663 /* NetworkManager.swift */,
 				D46548FB26D30AE1001033D8 /* PhotoService.swift */,
@@ -413,6 +424,7 @@
 				D4D9877625CC87B500E5D611 /* LoginFromController.swift in Sources */,
 				D427737226249EE300792D9E /* RealmManager.swift in Sources */,
 				D4D9875E25CC5B9F00E5D611 /* AppDelegate.swift in Sources */,
+				D42E77B227A869D10026975F /* NetworkManagerAdapter.swift in Sources */,
 				D41581E02757878A0089F7FC /* Extensions.swift in Sources */,
 				D477111E26039DD6007FD730 /* CustomPushAnimator.swift in Sources */,
 				D4FF3A132649A74400F2BA97 /* News.swift in Sources */,
