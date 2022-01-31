@@ -9,10 +9,19 @@ import UIKit
 
 class LoginFromController: UIViewController {
     
+    @IBOutlet weak var vkontakteLabel: UILabel!{
+        didSet {
+            vkontakteLabel.textColor = .brandBlue
+        }
+    }
     @IBOutlet weak private var loginInput: UITextField!
     @IBOutlet weak private var passwordInput: UITextField!
     @IBOutlet weak private var scrollView: UIScrollView!
-    @IBOutlet weak private var loginButton: UIButton!
+    @IBOutlet weak private var loginButton: UIButton!{
+        didSet {
+            loginButton.setTitleColor(.brandBlue, for: .normal)
+        }
+    }
     @IBOutlet weak private var loginButtonVKweb: UIButton!
     
     override func viewWillAppear(_ animated: Bool) {
@@ -37,6 +46,7 @@ class LoginFromController: UIViewController {
 
         let hideKeyboardGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
         scrollView?.addGestureRecognizer(hideKeyboardGesture)
+        
     }
     
     @objc func keyboardWasShown(notification: Notification) {

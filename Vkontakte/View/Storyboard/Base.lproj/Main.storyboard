@@ -135,6 +135,7 @@
                         <outlet property="loginInput" destination="rBD-em-C4m" id="p0c-7M-5hg"/>
                         <outlet property="passwordInput" destination="nST-gy-eqA" id="5Eg-He-HQx"/>
                         <outlet property="scrollView" destination="WZJ-He-2cd" id="LKr-U2-QF1"/>
+                        <outlet property="vkontakteLabel" destination="yVH-99-Ypb" id="Adj-Ex-6yo"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -411,6 +412,7 @@
                     <toolbarItems/>
                     <navigationItem key="navigationItem" title="Сообщества" id="FrX-ya-4Pe">
                         <barButtonItem key="rightBarButtonItem" title="GlobalGroupsButton" image="magnifyingglass" catalog="system" id="W5G-0t-xzn">
+                            <color key="tintColor" red="0.20784313730000001" green="0.45098039220000002" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
                             <connections>
                                 <segue destination="ZOO-Gc-hAY" kind="show" id="tO8-9I-wiW"/>
                             </connections>
@@ -574,6 +576,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="color" keyPath="tintColor">
+                                <color key="value" red="0.20784313730000001" green="0.45098039220000002" blue="0.93333333330000001" alpha="1" colorSpace="calibratedRGB"/>
+                            </userDefinedRuntimeAttribute>
+                        </userDefinedRuntimeAttributes>
                     </tabBar>
                     <connections>
                         <segue destination="nOi-lt-R99" kind="relationship" relationship="viewControllers" id="9zI-w9-bO5"/>
