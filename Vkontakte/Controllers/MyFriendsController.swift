@@ -25,7 +25,16 @@ class MyFriendsController: UIViewController {
     }()
     
     @IBOutlet weak private var myFriendsSearchBar: UISearchBar!
-    @IBOutlet weak var myFriendsTableView: UITableView!
+    
+    @IBOutlet weak var myFriendsTableView: UITableView!{
+        didSet{
+            myFriendsTableView.sectionIndexBackgroundColor = .clear
+            myFriendsTableView.dataSource = self
+            myFriendsTableView.delegate = self
+            myFriendsTableView.refreshControl = refreshControl
+            myFriendsSearchBar.delegate = self
+        }
+    }
     
     private let myFriendsCellIdentifier = "MyFriendsCell"
     private let segueIdentifier = "showPhoto"
@@ -64,14 +73,8 @@ class MyFriendsController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        self.myFriendsTableView.dataSource = self
-        self.myFriendsTableView.delegate = self
-        self.myFriendsTableView.refreshControl = refreshControl
-        self.myFriendsSearchBar.delegate = self
-        
         self.setFilteredUserNotification()
-
+    
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -192,8 +195,9 @@ class MyFriendsController: UIViewController {
             case .success(let usersArray):
                 DispatchQueue.main.async {
                     try? self?.realmManager?.add(objects: usersArray)
-                    completion?()
                 }
+                self?.myFriendsTableView.reloadData()
+                completion?()
             case .failure(let error):
                 print(error.localizedDescription)
             }
@@ -206,6 +210,7 @@ class MyFriendsController: UIViewController {
         let dataSource = self.dataUserFiltered[indexPath.section].names[indexPath.row]
         let userID = String(dataSource.id)
         destination.userID = userID
+        
     }
     
     // DataSource without segue with Delegate (xib cell)
@@ -229,6 +234,9 @@ extension MyFriendsController: UISearchBarDelegate {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar){
         self.view.endEditing(true)
+        searchBar.text = nil
+        self.myFriendsTableView.reloadData()
+
     }
 }
 
@@ -259,8 +267,7 @@ extension MyFriendsController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: self.myFriendsCellIdentifier, for: indexPath) as? MyFriendsCell else {return UITableViewCell()}
         let data = self.dataUserFiltered[indexPath.section].names[indexPath.row]
-        cell.setupCell(data: data)
-
+        cell.setupCell(data: data, cell: cell, indexPath: indexPath)
         return cell
     }
     
@@ -269,14 +276,27 @@ extension MyFriendsController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 30))
-        header.backgroundColor = .systemBackground
-        header.alpha = 0.9
         
-        let titleForHeaderLabel = UILabel(frame: CGRect(x: 16, y: 5, width: header.frame.size.width - 10 , height: header.frame.size.height - 10))
+        let header = UIView(frame: CGRect(x: 0,
+                                          y: 0,
+                                          width: view.frame.size.width,
+                                          height: 30))
+        
+        header.backgroundColor = myFriendsTableView.backgroundColor
+        header.alpha = 1
+        
+        let titleForHeaderLabel = UILabel()
         titleForHeaderLabel.text = self.dataUserFiltered[section].letter
-        titleForHeaderLabel.font = .boldSystemFont(ofSize: 17)
+        titleForHeaderLabel.font = .boldSystemFont(ofSize: 15)
+        titleForHeaderLabel.backgroundColor = myFriendsTableView.backgroundColor
         titleForHeaderLabel.textColor = .systemGray
+        
+        titleForHeaderLabel.frame = CGRect(
+            x: 20,
+            y: header.bounds.midY - titleForHeaderLabel.font.pointSize/2,
+            width: header.frame.size.width,
+            height: titleForHeaderLabel.font.pointSize)
+        
         header.addSubview(titleForHeaderLabel)
         return header
     }
@@ -284,6 +304,7 @@ extension MyFriendsController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 30
     }
+    
     
     
 }

@@ -1,5 +1,20 @@
 PODS:
   - Alamofire (5.4.2)
+  - PINCache (3.0.3):
+    - PINCache/Arc-exception-safe (= 3.0.3)
+    - PINCache/Core (= 3.0.3)
+  - PINCache/Arc-exception-safe (3.0.3):
+    - PINCache/Core
+  - PINCache/Core (3.0.3):
+    - PINOperation (~> 1.2.1)
+  - PINOperation (1.2.1)
+  - PINRemoteImage/Core (3.0.3):
+    - PINOperation
+  - PINRemoteImage/iOS (3.0.3):
+    - PINRemoteImage/Core
+  - PINRemoteImage/PINCache (3.0.3):
+    - PINCache (~> 3.0.3)
+    - PINRemoteImage/Core
   - PromiseKit (6.13.1):
     - PromiseKit/CorePromise (= 6.13.1)
     - PromiseKit/Foundation (= 6.13.1)
@@ -17,32 +32,65 @@ PODS:
   - SDWebImage (5.11.0):
     - SDWebImage/Core (= 5.11.0)
   - SDWebImage/Core (5.11.0)
+  - SkeletonView (1.26.0)
   - SwiftyJSON (4.3.0)
+  - Texture (3.1.0):
+    - Texture/AssetsLibrary (= 3.1.0)
+    - Texture/Core (= 3.1.0)
+    - Texture/MapKit (= 3.1.0)
+    - Texture/Photos (= 3.1.0)
+    - Texture/PINRemoteImage (= 3.1.0)
+    - Texture/Video (= 3.1.0)
+  - Texture/AssetsLibrary (3.1.0):
+    - Texture/Core
+  - Texture/Core (3.1.0)
+  - Texture/MapKit (3.1.0):
+    - Texture/Core
+  - Texture/Photos (3.1.0):
+    - Texture/Core
+  - Texture/PINRemoteImage (3.1.0):
+    - PINRemoteImage/iOS (~> 3.0.0)
+    - PINRemoteImage/PINCache
+    - Texture/Core
+  - Texture/Video (3.1.0):
+    - Texture/Core
 
 DEPENDENCIES:
   - Alamofire (~> 5.2)
   - PromiseKit
   - RealmSwift
   - SDWebImage (~> 5.0)
+  - SkeletonView
   - SwiftyJSON (~> 4.0)
+  - Texture
 
 SPEC REPOS:
   trunk:
     - Alamofire
+    - PINCache
+    - PINOperation
+    - PINRemoteImage
     - PromiseKit
     - Realm
     - RealmSwift
     - SDWebImage
+    - SkeletonView
     - SwiftyJSON
+    - Texture
 
 SPEC CHECKSUMS:
   Alamofire: bfbc4c2fe5909b1d94fb4ef2277c6b3727ef5dae
+  PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
+  PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
+  PINRemoteImage: f1295b29f8c5e640e25335a1b2bd9d805171bd01
   PromiseKit: 28fda91c973cc377875d8c0ea4f973013c05b6db
   Realm: e523da9ade306c5ae87e85dc09fdef148d3e1cc1
   RealmSwift: 4f6758c3adbdcc87f7b7777107226532a077f61c
   SDWebImage: 7acbb57630ac7db4a495547fb73916ff3e432f6b
+  SkeletonView: 6b62a8ddbc64abb113ea3243e4a9979e5750f147
   SwiftyJSON: 6faa0040f8b59dead0ee07436cbf76b73c08fd08
+  Texture: 2e8ab2519452515f7f5a520f5a8f7e0a413abfa3
 
-PODFILE CHECKSUM: 60efd7f8084a2c522617cd3c42ecc9d31d03fda7
+PODFILE CHECKSUM: bded0a21ca8afce4b54f1227f6e123974a7093e7
 
 COCOAPODS: 1.10.1

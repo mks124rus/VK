@@ -96,8 +96,9 @@ class NewsCellPhoto: UITableViewCell {
 //        }
 //    }
     
-    public func setupCell(data: News){
-
+    public func setupCell(data: News, cell: NewsCellPhoto, indexPath: IndexPath){
+        cell.tag = indexPath.row
+        
         guard let photoWidth = data.photoWidth,
               let photoHeiht = data.photoHeight,
               let logoURL = data.avatar,
@@ -106,33 +107,22 @@ class NewsCellPhoto: UITableViewCell {
         self.nameLabel.text = data.name
         self.textPostLabel.text = data.text
         
-
-        
         self.photoPostHeght.constant = CGFloat(data.photoHeight ?? 0)
         
-        photoService.photo(stringURL: logoURL) { [weak self](image) in
-            DispatchQueue.main.async {
-                self?.logoView.image = image
+        if cell.tag == indexPath.row {
+            photoService.photo(stringURL: logoURL) { [weak self](image) in
+                DispatchQueue.main.async {
+                    self?.logoView.image = image
+                }
             }
-        }
-        photoService.photo(stringURL: photoURL) { [weak self](image) in
-            DispatchQueue.main.async {
-                self?.photoPost.image = image
+            photoService.photo(stringURL: photoURL) { [weak self](image) in
+                DispatchQueue.main.async {
+                    self?.photoPost.image = image
+                }
             }
-        }
-         
-        if textPostLabel.text!.count > 250 {
-            showAllTextButton.isHidden = false
-            showAllTextButton.setTitle("Показать полностью...", for: .normal)
-            textPostLabel.numberOfLines = 10
-            isExpanded = false
-        } else {
-            showAllTextButton.isHidden = true
         }
 
-//        self.setAndCacheLogo(data: data)
-//        self.setAndCachePhotoPost(data: data)
-//
+
         self.likeCountLabel.text = String(data.likesCount)
         self.commentsCountLabel.text = String(data.commentsCount)
         self.repostCountLabel.text = String(data.repostsCount)
@@ -147,6 +137,9 @@ class NewsCellPhoto: UITableViewCell {
     }
     
     func expandPostText(){
+        guard let text = textPostLabel.text else {return}
+        print(text.count)
+        
         if isExpanded == false {
             textPostLabel.numberOfLines = 0
             showAllTextButton.setTitle("Скрыть", for: .normal)
@@ -161,6 +154,21 @@ class NewsCellPhoto: UITableViewCell {
     func configShowAllTextButton(indexPath: IndexPath){
         showAllTextButton.tag = indexPath.row
         self.indexPath = indexPath
+        
+        guard let text = textPostLabel.text else {return}
+
+        if text.count > 250 {
+            if text.count == 255 {
+                showAllTextButton.isHidden = true
+            } else {
+                showAllTextButton.isHidden = false
+                showAllTextButton.setTitle("Показать полностью...", for: .normal)
+                textPostLabel.numberOfLines = 10
+                isExpanded = false
+            }
+        } else {
+            showAllTextButton.isHidden = true
+        }
     }
     
     @IBAction func showAllPostText(_ sender: UIButton) {
@@ -168,8 +176,6 @@ class NewsCellPhoto: UITableViewCell {
         print("tap")
     }
     
-
-
 }
 
 

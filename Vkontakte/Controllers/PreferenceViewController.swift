@@ -8,129 +8,159 @@
 import UIKit
 
 class PreferenceViewController: UITableViewController {
+    
+    @IBOutlet weak var clearCacheLabel: UILabel!{
+        didSet{
+            clearCacheLabel.text = "Очистить кеш"
+        }
+    }
+    @IBOutlet weak var cacheSizeLabel: UILabel! {
+        didSet {
+            cacheSizeLabel.text = "0 KB"
+        }
+    }
+    @IBOutlet weak var exitLabel: UILabel!{
+        didSet {
+            exitLabel.text = "Выход"
+        }
+    }
+    private let photoService = PhotoService.instance
+    private let realmMngr = RealmManager.shared
 
-    @IBOutlet weak var clearCacheButton: UIButton!
-    @IBOutlet weak private var logOutButton: UIButton!
-    @IBAction func logOut(unwindSegue: UIStoryboardSegue) {
-        logOutButtonAnimation()
-        showLogOutAlert()
-    }
-    
-    @IBAction func clearCache(_ sender: UIButton) {
-        PhotoService.instance.clearCache()
-        showClearCacheAlert()
-    }
-    
-    func showLogOutAlert() {
+    private func showLogOutAlert() {
         let alert = UIAlertController(title: "Выйти?", message: nil, preferredStyle: .alert)
         let actionYes = UIAlertAction(title: "Да", style: .destructive) { action in
             self.dismiss(animated: true, completion: nil)
         }
-        alert.addAction(actionYes)
+        
         let actionNo = UIAlertAction(title: "Нет", style: .cancel, handler: nil)
-
+        
+        alert.addAction(actionYes)
         alert.addAction(actionNo)
         present(alert, animated: true, completion: nil)
     }
     
-    func showClearCacheAlert() {
-        let alert = UIAlertController(title: "Кэш очищен", message: nil, preferredStyle: .alert)
-        let actionOK = UIAlertAction(title: "Ок", style: .default)
-        alert.addAction(actionOK)
-
+    
+    
+    ///Delete directory "Images" in /Library/Caches/ and erases all entries in Documents/default.realm
+    private func cleanCacheAndRealmData(){
+        let alert = UIAlertController(title: nil, message: "Будет очищена база реалм и кеш изображений", preferredStyle: .actionSheet)
+        let actionClear = UIAlertAction(title: "Очистить", style: .default) { _ in
+            try? self.realmMngr?.deleteAll()
+            self.photoService.clearCache()
+            self.setCacheSizeLabelText()
+        }
+        
+        let actionCancel = UIAlertAction(title: "Отмена", style: .destructive, handler: nil)
+        alert.addAction(actionClear)
+        alert.addAction(actionCancel)
         present(alert, animated: true, completion: nil)
     }
     
-    func logOutButtonAnimation() {
-        let animation = CASpringAnimation(keyPath: "transform.scale")
-        animation.fromValue = 0.9
-        animation.toValue = 1
-        animation.stiffness = 50
-        animation.mass = 1
-        animation.duration = 0.45
-        animation.beginTime = CACurrentMediaTime()
-        animation.fillMode = CAMediaTimingFillMode.backwards
-        
-        self.logOutButton.layer.add(animation, forKey: nil)
+    
+    
+    private func setCacheSizeLabelText() {
+        guard let imageCacheDir = PhotoService.instance.imageCacheURL else {return}
+        do {
+            if var sizeOnDisk = try imageCacheDir.sizeOnDisk() {
+                if sizeOnDisk == "Zero KB" {
+                    sizeOnDisk = "0 KB"
+                }
+                self.cacheSizeLabel.text = sizeOnDisk
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
-
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        setCacheSizeLabelText()
 
+    }
+    
     // MARK: - Table view data source
-
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
         return 1
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return 2
     }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
 
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
-        return cell
+        print("Selected cell \(indexPath.row)")
+        
+        switch indexPath.row {
+        case 0:
+            cleanCacheAndRealmData()
+        case 1:
+            showLogOutAlert()
+        default :
+            break
+            
+        }
     }
-    */
-
+    
     /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
-    }
-    */
-
+     // Override to support conditional editing of the table view.
+     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+     // Return false if you do not want the specified item to be editable.
+     return true
+     }
+     */
+    
     /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
-
+     // Override to support editing the table view.
+     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+     if editingStyle == .delete {
+     // Delete the row from the data source
+     tableView.deleteRows(at: [indexPath], with: .fade)
+     } else if editingStyle == .insert {
+     // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+     }
+     }
+     */
+    
     /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
+     // Override to support rearranging the table view.
+     override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
+     
+     }
+     */
+    
     /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
+     // Override to support conditional rearranging of the table view.
+     override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+     // Return false if you do not want the item to be re-orderable.
+     return true
+     }
+     */
+    
     /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+     // MARK: - Navigation
+     
+     // In a storyboard-based application, you will often want to do a little preparation before navigation
+     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+     // Get the new view controller using segue.destination.
+     // Pass the selected object to the new view controller.
+     }
+     */
+    
     
     
     

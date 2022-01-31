@@ -10,6 +10,7 @@ import UIKit
 class MyFriendsCell: UITableViewCell {
     @IBOutlet weak private var friendNameLabel: UILabel!
     @IBOutlet weak private var friendAvatarView: AvatarView!
+    @IBOutlet weak var contView: UIView!
     
     private let photoService = PhotoService.instance
     
@@ -21,12 +22,13 @@ class MyFriendsCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         self.friendNameLabel.text = nil
+        self.friendAvatarView.image = nil
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         let friendAvatarViewGesture = UITapGestureRecognizer(target: self, action: #selector(friendAvatarAnimate))
-        friendAvatarView.addGestureRecognizer(friendAvatarViewGesture)
+        self.friendAvatarView.addGestureRecognizer(friendAvatarViewGesture)
         
     }
     
@@ -57,7 +59,6 @@ class MyFriendsCell: UITableViewCell {
         super.layoutSubviews()
         self.frameFriendAvatarView()
         self.frameFriendNameLabel()
-        
     }
     
     private func getFriendNameLabelSize(text: String, font: UIFont) -> CGSize{
@@ -97,16 +98,20 @@ class MyFriendsCell: UITableViewCell {
     
     
     
-    public func setupCell(data: User){
-        
-        self.setTextFriendNameLabel(text: data.firstLastName)
-//      self.friendNameLabel?.text = data.firstLastName
-//      self.setAndCacheLogo(data: data)
-        photoService.photo(stringURL: data.avatar) {[weak self] (image) in
-            DispatchQueue.main.async {
-                self?.friendAvatarView.image = image
+    public func setupCell(data: User, cell: MyFriendsCell, indexPath: IndexPath){
+        cell.tag = indexPath.row
+        if cell.tag == indexPath.row {
+            self.setTextFriendNameLabel(text: data.firstLastName)
+            photoService.photo(stringURL: data.avatar) {[weak self] (image) in
+                DispatchQueue.main.async {
+                    self?.friendAvatarView.image = image
+                }
             }
         }
+        
+//      self.friendNameLabel?.text = data.firstLastName
+//      self.setAndCacheLogo(data: data)
+
     }
     
     

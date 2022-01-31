@@ -67,14 +67,20 @@ class NewsCellText: UITableViewCell {
 //        }
 //    }
     
-    public func setupCell(data: News){
+    public func setupCell(data: News, cell: NewsCellText, indexPath: IndexPath){
+        cell.tag = indexPath.row
+        
+
+        
         guard let stringURL = data.avatar else {return}
         self.nameLabel.text = data.name
         self.textPostLabel.text = data.text
 //        self.setAndCacheLogo(data: data)
-        photoService.photo(stringURL: stringURL) { [weak self] (image) in
-            DispatchQueue.main.async {
-                self?.logoView.image = image
+        if cell.tag == indexPath.row {
+            photoService.photo(stringURL: stringURL) { [weak self] (image) in
+                DispatchQueue.main.async {
+                    self?.logoView.image = image
+                }
             }
         }
         self.likeCountLabel.text = String(data.likesCount)

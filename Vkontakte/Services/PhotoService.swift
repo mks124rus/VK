@@ -38,7 +38,9 @@ class PhotoService {
     private let cacheLifetime: TimeInterval = 30*24*60*60 //дни * часы * минуты * секунды
     private let filemngr = FileManager.default
     
-    private var imageCacheURL: URL? {
+    
+    /// URL  /Library/Caches/Images
+    public var imageCacheURL: URL? {
         let dirname = "Images"
         guard let cacheDir = filemngr.urls(for: .cachesDirectory, in: .userDomainMask).first else {return nil}
         let url = cacheDir.appendingPathComponent(dirname, isDirectory: true)
@@ -53,16 +55,17 @@ class PhotoService {
         return url
     }
     
+    
+    ///Delete directory "Images" in /Library/Caches/
     public func clearCache(){
-        let dirname = "Images"
-        let cacheDir = filemngr.urls(for: .cachesDirectory, in: .userDomainMask).first
-        if let url = cacheDir?.appendingPathComponent(dirname, isDirectory: true) {
-            if filemngr.fileExists(atPath: url.path){
-                do {
-                    try filemngr.removeItem(at: url)
-                } catch {
-                    print(error.localizedDescription)
-                }
+        guard let url = imageCacheURL else {return}
+        
+        if filemngr.fileExists(atPath: url.path){
+            do {
+                try filemngr.removeItem(at: url)
+                print("'Images' is delete...")
+            } catch {
+                print(error.localizedDescription)
             }
         }
     }
@@ -70,7 +73,7 @@ class PhotoService {
     private func getFilePath(stringURL: String) -> URL? {
         
         let url = URL(string: stringURL)
-        let filename = url?.lastPathComponent ?? "none.jpg"
+        let filename = url?.lastPathComponent ?? ""
         guard let imageCacheURL = self.imageCacheURL else {return nil}
         return imageCacheURL.appendingPathComponent(filename)
     }
@@ -120,5 +123,6 @@ class PhotoService {
         }
     }
 }
+
 
 

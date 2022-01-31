@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5B766265547C6A655B58D059 /* Pods_Vkontakte.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E3AFCED6DEE8B4E8B5BCBFC /* Pods_Vkontakte.framework */; };
+		D41581E02757878A0089F7FC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41581DF2757878A0089F7FC /* Extensions.swift */; };
 		D427737226249EE300792D9E /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D427737126249EE300792D9E /* RealmManager.swift */; };
 		D428FEBE2652C609009C2E89 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = D428FEBD2652C609009C2E89 /* ImageCache.swift */; };
 		D43B28872631C6D4003D8423 /* MyGroupsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D43B28862631C6D4003D8423 /* MyGroupsViewController.swift */; };
@@ -54,6 +55,7 @@
 		3E3AFCED6DEE8B4E8B5BCBFC /* Pods_Vkontakte.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Vkontakte.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EE54728CE847B097A5A508B /* Pods-Vkontakte.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Vkontakte.release.xcconfig"; path = "Target Support Files/Pods-Vkontakte/Pods-Vkontakte.release.xcconfig"; sourceTree = "<group>"; };
 		9B465838CF179D4AF29DD7FF /* Pods-Vkontakte.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Vkontakte.debug.xcconfig"; path = "Target Support Files/Pods-Vkontakte/Pods-Vkontakte.debug.xcconfig"; sourceTree = "<group>"; };
+		D41581DF2757878A0089F7FC /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		D427737126249EE300792D9E /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
 		D428FEBD2652C609009C2E89 /* ImageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
 		D43B28862631C6D4003D8423 /* MyGroupsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyGroupsViewController.swift; sourceTree = "<group>"; };
@@ -120,13 +122,21 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		D41581DE275787600089F7FC /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				D41581DF2757878A0089F7FC /* Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		D44FBFA9266F5B1F00D8AC4F /* Services */ = {
 			isa = PBXGroup;
 			children = (
 				D427737126249EE300792D9E /* RealmManager.swift */,
 				D4E448D626087F870003D663 /* NetworkManager.swift */,
-				D428FEBD2652C609009C2E89 /* ImageCache.swift */,
 				D46548FB26D30AE1001033D8 /* PhotoService.swift */,
+				D428FEBD2652C609009C2E89 /* ImageCache.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -160,9 +170,7 @@
 			isa = PBXGroup;
 			children = (
 				D4FF3A0B26497D7A00F2BA97 /* NewsCellPhoto.swift */,
-				D4FF3A0C26497D7A00F2BA97 /* NewsCellPhoto.xib */,
 				D4FF3A2F264FFBD200F2BA97 /* NewsCellText.swift */,
-				D4FF3A30264FFBD200F2BA97 /* NewsCellText.xib */,
 				D4DB828B25EA2A01002B3AC3 /* MyFriendsCell.swift */,
 				D44112D425E685080074A97A /* FriendsPhotosCell.swift */,
 				D43B28892631C703003D8423 /* MyGroupsTableViewCell.swift */,
@@ -175,6 +183,8 @@
 			isa = PBXGroup;
 			children = (
 				D4D9876325CC5B9F00E5D611 /* Main.storyboard */,
+				D4FF3A0C26497D7A00F2BA97 /* NewsCellPhoto.xib */,
+				D4FF3A30264FFBD200F2BA97 /* NewsCellText.xib */,
 			);
 			path = Storyboard;
 			sourceTree = "<group>";
@@ -233,6 +243,7 @@
 		D4D9875C25CC5B9F00E5D611 /* Vkontakte */ = {
 			isa = PBXGroup;
 			children = (
+				D41581DE275787600089F7FC /* Extensions */,
 				D44FBFB0266F5C6800D8AC4F /* View */,
 				D44FBFAE266F5BE200D8AC4F /* Controllers */,
 				D44FBFA9266F5B1F00D8AC4F /* Services */,
@@ -402,6 +413,7 @@
 				D4D9877625CC87B500E5D611 /* LoginFromController.swift in Sources */,
 				D427737226249EE300792D9E /* RealmManager.swift in Sources */,
 				D4D9875E25CC5B9F00E5D611 /* AppDelegate.swift in Sources */,
+				D41581E02757878A0089F7FC /* Extensions.swift in Sources */,
 				D477111E26039DD6007FD730 /* CustomPushAnimator.swift in Sources */,
 				D4FF3A132649A74400F2BA97 /* News.swift in Sources */,
 				D44112D225E6825A0074A97A /* FriendsPhotosController.swift in Sources */,
