@@ -15,8 +15,15 @@ class GetDataOperation: AsyncOperation {
     
     override func main() {
         request.responseData(queue: DispatchQueue.global()) { [weak self] response in
-            self?.data = response.data
-            self?.state = .finished
+            switch response.result{
+            case .success(let data):
+                self?.data = data
+                self?.state = .finished
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+//            self?.data = response.data
+//            self?.state = .finished
         }
     }
     

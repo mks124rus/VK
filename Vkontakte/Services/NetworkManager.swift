@@ -59,47 +59,58 @@ class NetworkManager {
     }
     
     //новости
-    func loadNewsFeed(token: String, completion: ((Swift.Result<[News], Error>) -> Void)? = nil){
+    func loadNewsFeed(token: String, startTime: Double? = nil, startFrom: String, completion: @escaping (Swift.Result<[News], Error>, String) -> Void) {
 
             let baseURL = "https://api.vk.com"
             let path = "/method/newsfeed.get"
             
-            let params: Parameters = [
+        var params: Parameters = [
                 "access_token": token,
+                "start_from": startFrom,
                 "max_photos": "1",
                 "filters": "post, photo",
                 "return_banned" : "0",
-                "count" : "50",
+                "count" : "25",
                 "v" : "5.130"
             ]
+        
+        if let startTime = startTime {
+            params["start_time"] = startTime
+        }
             
         AF.request(baseURL + path, method: .get, parameters: params).responseJSON { (response) in
             switch response.result {
             case .success(let data):
-                let dispatchGroup = DispatchGroup()
-                var newsData: [News] = []
-                DispatchQueue.global().async(group: dispatchGroup, qos: .utility) {
-                    let json = JSON(data)
-            
-                    let newsJSON = json["response","items"].arrayValue
-                    let usersJSON = json["response","profiles"].arrayValue
-                    let groupsJSON = json["response", "groups"].arrayValue
-                    
-                    let news = newsJSON.map {News(from: $0) }
-                    let user = usersJSON.map {User(from: $0) }
-                    let group = groupsJSON.map {Group(from: $0)}
-                    self.sourcePostIdentify(news: news, user: user, group: group)
-                    newsData = news
-                    
+                let json = JSON(data)
+    
+                var news = [News]()
+                
+                var users = [User]()
+                var groups = [Group]()
+                let nextFrom = json["response"]["next_from"].stringValue
+                
+                let parsingGroup = DispatchGroup()
+                
+                DispatchQueue.global().async(group: parsingGroup) {
+                    users = json["response","profiles"].arrayValue.map { User(from: $0) }
+                }
+                DispatchQueue.global().async(group: parsingGroup) {
+                    groups = json["response", "groups"].arrayValue.map { Group(from: $0)}
                 }
                 
-                dispatchGroup.notify(queue: DispatchQueue.main){
-                    completion?(.success(newsData))
+                parsingGroup.notify(queue: .global()){
+                    news = json["response","items"].arrayValue.map { News(from: $0)}
+                    
+                    self.sourcePostIdentify(news: news, user: users, group: groups)
+                    DispatchQueue.main.async {
+                        completion(.success(news), nextFrom)
+                    }
+                    
                 }
                 
             case .failure(let error):
                 print(error.localizedDescription)
-                completion?(.failure(error))
+                completion(.failure(error), "")
             }
         }
     }
@@ -186,6 +197,23 @@ class NetworkManager {
             "access_token": token,
             "fields": "photo_50",
             "order": "name",
+            "v" : "5.130"
+        ]
+        
+        return AF.request(baseURL + path, method: .get, parameters: params)
+    }
+    
+    func loadFriendsPhotoOperations(userID: String) -> DataRequest?{
+        let baseURL = "https://api.vk.com"
+        let path = "/method/photos.getAll"
+        
+        let params: Parameters = [
+            "access_token": "\(NetworkManager.shared.token ?? "")",
+            "owner_id": userID,
+            "album_id" : "wall",
+            "extended": "1",
+            "rev" : "1",
+            "count" : "50",
             "v" : "5.130"
         ]
         

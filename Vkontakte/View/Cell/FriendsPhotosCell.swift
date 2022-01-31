@@ -16,6 +16,7 @@ class FriendsPhotosCell: UICollectionViewCell {
     private var photoService = PhotoService.instance
     override func prepareForReuse() {
         super.prepareForReuse()
+        self.photo.image = nil
     }
     
 //    private func setupPhotoView(data: Photo, cell: FriendsPhotosCell, indexPath: IndexPath){

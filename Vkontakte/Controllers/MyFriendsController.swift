@@ -79,8 +79,9 @@ class MyFriendsController: UIViewController {
         if let users = userResults, users.isEmpty{
 //        self.loadData()
             self.loadDataWithOperations()
+            self.createSection(userResults: users)
         }
-        self.createSection()
+//        self.createSection()
     }
     
     deinit {
@@ -104,7 +105,7 @@ class MyFriendsController: UIViewController {
 //        парсинг
         let parseData = ParseUserDataOperation()
 //        сохранение в реалм
-        let saveRealm = SaveToRealmOperation()
+        let saveRealm = SaveToRealmUserOperation()
         
         parseData.addDependency(getDataOperation)
         saveRealm.addDependency(parseData)
@@ -120,18 +121,13 @@ class MyFriendsController: UIViewController {
         self.filteredUsersNotificationToken = self.userResults?.observe { [weak self] change in
             switch change {
             case .initial(let users):
-                
-                let groupedDictionary = Dictionary(grouping: users, by: {String($0.firstname.prefix(1))})
-                let keys = groupedDictionary.keys.sorted()
-                self?.dataUser = keys.map{Section(letter: $0, names: groupedDictionary[$0] ?? [])}
+                self?.createSection(userResults: users)
                 self?.myFriendsTableView.reloadData()
                 
                 print("Initialize \(users.count)")
                 break
             case .update(let users, deletions: let deletions, insertions: let insertions, modifications: let modifications):
-                let groupedDictionary = Dictionary(grouping: users, by: {String($0.firstname.prefix(1))})
-                let keys = groupedDictionary.keys.sorted()
-                self?.dataUser = keys.map{Section(letter: $0, names: groupedDictionary[$0] ?? [])}
+                self?.createSection(userResults: users)
                 self?.myFriendsTableView.reloadData()
                 
                 let sections = self?.dataUser
@@ -174,14 +170,20 @@ class MyFriendsController: UIViewController {
         }
     }
     
-    private func createSection(){
-        if let userResults = userResults{
+    private func createSection(userResults: Results<User>){
         let groupedDictionary = Dictionary(grouping: userResults, by: {String($0.firstname.prefix(1))})
         let keys = groupedDictionary.keys.sorted()
         self.dataUser = keys.map{Section(letter: $0, names: groupedDictionary[$0] ?? [])}
-        }
-        //        self.myFriendsTableView.reloadData()
     }
+    
+//    private func createSection(){
+//        if let userResults = userResults{
+//        let groupedDictionary = Dictionary(grouping: userResults, by: {String($0.firstname.prefix(1))})
+//        let keys = groupedDictionary.keys.sorted()
+//        self.dataUser = keys.map{Section(letter: $0, names: groupedDictionary[$0] ?? [])}
+//        }
+//        //        self.myFriendsTableView.reloadData()
+//    }
     
     private func loadData(completion: (() -> Void)? = nil) {
         NetworkManager.shared.loadFriends() {
