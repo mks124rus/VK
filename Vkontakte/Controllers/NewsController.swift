@@ -25,6 +25,8 @@ class NewsController: UIViewController, ExpandPostTextLabel{
     var isLoading = false
     
     private var post:[News] = []
+    private let viewModelFactory = NewsViewModelFactory()
+    private var viewModels: [NewsViewModel] = []
     private var token = NetworkManager.shared.token
     private let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -67,12 +69,21 @@ class NewsController: UIViewController, ExpandPostTextLabel{
             [weak self] (result, startFrom) in
             switch result {
             case .success(let newsArray):
+
                 DispatchQueue.main.async {
-                self?.post = newsArray
-                self?.newsTableView.reloadData()
-                self?.refreshControl.attributedTitle = NSAttributedString(string: "")
-                completion?()
+                    self?.viewModels = self?.viewModelFactory.constructViewModels(from: newsArray) ?? []
+                    self?.newsTableView.reloadData()
+                    self?.refreshControl.attributedTitle = NSAttributedString(string: "")
+                    completion?()
                 }
+
+                
+
+//                    self?.post = newsArray
+
+
+
+
             case .failure(let error):
                 print(error.localizedDescription)
                 self?.refreshControl.attributedTitle = NSAttributedString(string: "Ошибка загрузки")
@@ -113,7 +124,7 @@ extension NewsController: UITableViewDataSourcePrefetching{
         guard let maxSection = indexPaths.map({$0.section}).max() else {return}
         
         // Проверяем,является ли эта секция одной из трех ближайших к концу
-        if maxSection > post.count - 3,
+        if maxSection > viewModels.count - 3,
            
            // Убеждаемся, что мы уже не в процессе загрузки данных
            !isLoading {
@@ -123,7 +134,8 @@ extension NewsController: UITableViewDataSourcePrefetching{
                 guard let self = self else {return}
                 switch result {
                 case .success(let newsArray):
-                    self.post.append(contentsOf: newsArray)
+//                    self.post.append(contentsOf: newsArray)
+                    self.viewModels.append(contentsOf: self.viewModelFactory.constructViewModels(from: newsArray))
                     self.nextFrom = next
                     self.newsTableView.reloadData()
                     self.isLoading = false
@@ -143,7 +155,8 @@ extension NewsController: UITableViewDelegate {
 extension NewsController: UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return self.post.count
+        return self.viewModels.count
+//        return self.post.count
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
@@ -162,21 +175,24 @@ extension NewsController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let data = self.post[indexPath.section]
+//        let data = self.post[indexPath.section]
+        let news = self.viewModels[indexPath.section]
         
-        if data.photoURL != nil{
+        if news.photoPostURL != nil {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCellPhoto.identifier, for: indexPath) as? NewsCellPhoto else { return UITableViewCell()}
-            cell.setupCell(data: data, cell: cell, indexPath: indexPath)
+//            cell.setupCell(data: data, cell: cell, indexPath: indexPath)
+            cell.configureCell(with: news, cell: cell, indexPath: indexPath)
             cell.configShowAllTextButton(indexPath: indexPath)
             cell.delegate = self
-            cell.dateLabel.text = self.getDateCellText(for: indexPath, andTimestamp: data.date)
+            cell.dateLabel.text = self.getDateCellText(for: indexPath, andTimestamp: news.date)
             return cell
             
         } else {
-            
+
             guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCellText.identifier, for: indexPath) as? NewsCellText else { return UITableViewCell()}
-            cell.dateLabel.text = self.getDateCellText(for: indexPath, andTimestamp: data.date)
-            cell.setupCell(data: data, cell: cell, indexPath: indexPath)
+            cell.dateLabel.text = self.getDateCellText(for: indexPath, andTimestamp: news.date)
+            cell.configureCell(with: news, with: cell, with: indexPath)
+//            cell.setupCell(data: data, cell: cell, indexPath: indexPath)
             return cell
         }
     }

@@ -96,6 +96,48 @@ class NewsCellPhoto: UITableViewCell {
 //        }
 //    }
     
+    public func configureCell(with viewModel: NewsViewModel, cell: NewsCellPhoto, indexPath: IndexPath) {
+        
+        self.nameLabel.text = viewModel.name
+        self.textPostLabel.text = viewModel.text
+        
+        guard let photoWidth = viewModel.photoWidth,
+              let photoHeight = viewModel.photoHeight else {return}
+        
+        self.photoPostHeght.constant = CGFloat(viewModel.photoHeight ?? 0)
+        
+        let screenSize = UIScreen.main.bounds
+        self.photoPostWidth.constant = screenSize.width
+        let aspectRatio = self.photoPostWidth.constant / CGFloat(photoWidth)
+        self.photoPostHeght.constant = CGFloat(photoHeight) * aspectRatio
+        
+        cell.tag = indexPath.row
+        
+        if cell.tag == indexPath.row {
+            if let url = viewModel.avatarURL{
+                photoService.photo(stringURL:url) { [weak self] image in
+                    DispatchQueue.main.async {
+                        self?.logoView.image = image
+                    }
+                }
+            }
+
+            if let url = viewModel.photoPostURL{
+                photoService.photo(stringURL:url) { [weak self] image in
+                    DispatchQueue.main.async {
+                        self?.photoPost.image = image
+                    }
+                }
+            }
+        }
+
+        self.likeCountLabel.text = viewModel.likesCount
+        self.commentsCountLabel.text = viewModel.commentsCount
+        self.repostCountLabel.text = viewModel.repostsCount
+        
+        
+    }
+    
     public func setupCell(data: News, cell: NewsCellPhoto, indexPath: IndexPath){
         cell.tag = indexPath.row
         
@@ -136,7 +178,7 @@ class NewsCellPhoto: UITableViewCell {
 
     }
     
-    func expandPostText(){
+    public func expandPostText(){
         guard let text = textPostLabel.text else {return}
         print(text.count)
         
@@ -151,7 +193,7 @@ class NewsCellPhoto: UITableViewCell {
         }
     }
     
-    func configShowAllTextButton(indexPath: IndexPath){
+    public func configShowAllTextButton(indexPath: IndexPath){
         showAllTextButton.tag = indexPath.row
         self.indexPath = indexPath
         
