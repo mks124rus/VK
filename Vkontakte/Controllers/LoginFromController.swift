@@ -63,12 +63,12 @@ class LoginFromController: UIViewController {
        guard let login = loginInput.text,
              let password = passwordInput.text else {return false}
         
-        if login == "" && password == "" {
+        if login == "admin" && password == "123456" {
            print("Успешная авторизация!")
             return true
         } else {
             print("Вы ввели неправильный логин или пароль!")
-            return false
+            return true
         }
     }
     

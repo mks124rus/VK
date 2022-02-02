@@ -10,6 +10,8 @@ pod 'SwiftyJSON', '~> 4.0'
 pod 'RealmSwift'
 pod 'SDWebImage', '~> 5.0'
 pod 'PromiseKit'
+pod "Texture"
+pod 'SkeletonView'
 
   # Pods for Vkontakte
 

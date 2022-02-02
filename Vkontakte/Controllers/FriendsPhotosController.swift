@@ -7,12 +7,12 @@
 
 import UIKit
 import RealmSwift
-import SDWebImage
+
 class FriendsPhotosController: UIViewController{
     
     @IBOutlet weak var friendsPhotosColletctionView: UICollectionView!
-    @IBOutlet weak private var loadingView: UIView!
-    @IBOutlet weak private var NoPhotoLabel: UILabel!{
+    @IBOutlet weak var loadingView: UIView!
+    @IBOutlet weak var NoPhotoLabel: UILabel!{
         didSet{
             self.NoPhotoLabel.alpha = 0
         }
@@ -35,44 +35,46 @@ class FriendsPhotosController: UIViewController{
         imageView.isHidden = true
         return imageView
     }()
+    
     private var cellID = "FriendsPhotosViewCell"
     private var currentPhoto = Int()
     var userID: String = ""
     private var realmManager = RealmManager.shared
     private var networkManager = NetworkManager.shared
     private var photoService = PhotoService.instance
+    
     private var userResults: Results<User>?{
         let usersResult: Results<User>? = realmManager?.getObjects()
         let ownerID = Int(userID)
         let user = usersResult?.filter("id = \(ownerID ?? 0) ")
         return user
     }
-    private var photoResults: Results<Photo>? {
+    var photoResults: Results<Photo>? {
         let photoResult: Results<Photo>? = realmManager?.getObjects()
         let ownerID = Int(userID)
         let photo = photoResult?.filter("ownerID = \(ownerID ?? 0) ")
-        return photo?.sorted(byKeyPath: "likeCount", ascending: false)
+        return photo?.sorted(byKeyPath: "date", ascending: false)
     }
     
     private var photoResultsNotificationToken: NotificationToken?
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         self.friendsPhotosColletctionView.alwaysBounceVertical = true
         self.friendsPhotosColletctionView.refreshControl? = refreshControl
         self.friendsPhotosColletctionView.addSubview(refreshControl)
         self.friendsPhotosColletctionView.delegate = self
         self.friendsPhotosColletctionView.dataSource = self
-        
         self.view.addSubview(self.previewPhotoImageView)
         self.previewPhotoGesture()
         self.setPhotosNotification()
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
         if let photos = photoResults, photos.isEmpty {
             self.loadData()
         }
@@ -91,7 +93,7 @@ class FriendsPhotosController: UIViewController{
         super.viewDidLayoutSubviews()
         self.previewPhotoImageView.frame = view.bounds
     }
-    
+
     @objc func refresh(_ sender: UIRefreshControl) {
         self.refreshControl.beginRefreshing()
         self.loadData() {[weak self] in
@@ -151,6 +153,7 @@ class FriendsPhotosController: UIViewController{
     }
     
     private func loadData(completion: (() -> Void)? = nil){
+
         networkManager.loadFriendPhotos(userID: userID){
             [weak self] (result) in
             switch result {
@@ -158,9 +161,12 @@ class FriendsPhotosController: UIViewController{
                 DispatchQueue.main.async {
                     try? self?.realmManager?.add(objects: photoArray)
                 }
+                self?.friendsPhotosColletctionView.reloadData()
+
                 self?.refreshControl.attributedTitle = NSAttributedString(string: "")
                 self?.refreshControl.endRefreshing()
                 completion?()
+                
             case .failure(let error):
                 print(error.localizedDescription)
                 self?.refreshControl.attributedTitle = NSAttributedString(string: "Ошибка загрузки")
@@ -170,6 +176,7 @@ class FriendsPhotosController: UIViewController{
     }
     
     private func setupPreviewPhotoImageView(stringURL: String){
+        
         photoService.photo(stringURL: stringURL) { [weak self] (image) in
             DispatchQueue.main.async {
                 self?.previewPhotoImageView.image = image
@@ -188,10 +195,22 @@ class FriendsPhotosController: UIViewController{
     }
 }
 
+extension FriendsPhotosController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+
+        let insets: CGFloat = 5
+        let width = ((view.bounds.width) - (insets * 4)) / 3
+
+        //20% от ширины ячейки
+        let height = width + (width * 20)/100
+        return CGSize(width: width, height: height)
+    }
+}
+
 extension FriendsPhotosController: UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        self.NoPhotoLabel.isHidden = true
+
         guard let photoResults = self.photoResults else {return}
         self.currentPhoto = indexPath.item
         let stringURL = photoResults[indexPath.item].url
@@ -207,17 +226,18 @@ extension FriendsPhotosController: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         guard let photoResults = self.photoResults else {return 0}
-        if photoResults.isEmpty == true{
-            //        if self.dataPhoto.isEmpty == true{
+        
+        if photoResults.isEmpty {
             self.noPhotoAnimation()
             self.loadingView.isHidden = true
             self.friendsPhotosColletctionView.isHidden = true
         } else {
             self.loadingView.isHidden = false
+            self.NoPhotoLabel.isHidden = true
             self.loadingDotsAnimation()
             self.friendsPhotosColletctionView.isHidden = false
         }
-        //        print(dataPhoto)
+        
         return photoResults.count
     }
     
@@ -289,11 +309,9 @@ extension FriendsPhotosController {
                                                         
                                                        })
                                        })
-                        
-                        
                        })
-        
     }
+    
     private func swipeRightAnimationPreviewPhoto(){
         guard let photoResults = self.photoResults else {return}
         let currentStringURL = photoResults.map{$0.url}[self.currentPhoto]
@@ -332,8 +350,6 @@ extension FriendsPhotosController {
                                                         
                                                        })
                                        })
-                        
-                        
                        })
     }
     
@@ -460,9 +476,10 @@ extension FriendsPhotosController {
     }
     
     private func previewPhotoIsOpenAnimation() {
+
         UIView.animate(withDuration: 0.25,
                        delay: 0,
-                       options: .beginFromCurrentState,
+                       options: .showHideTransitionViews,
                        animations: {
                         self.previewPhotoImageView.alpha = 1
                         self.previewPhotoImageView.isHidden = false
@@ -475,7 +492,7 @@ extension FriendsPhotosController {
                         self.tabBarController?.tabBar.isHidden = true
                         self.friendsPhotosColletctionView.alpha = 0
                        })
-        
+
     }
     
     private func noPhotoAnimation() {
@@ -515,7 +532,7 @@ extension FriendsPhotosController {
         animationDote.fromValue = 0
         animationDote.toValue = 1
         animationDote.duration = 0.6
-        animationDote.repeatCount = 10
+        animationDote.repeatCount = .infinity
         dote.add(animationDote, forKey: nil)
         layerDote.instanceDelay = animationDote.duration / Double(layerDote.instanceCount)
         self.loadingView.layer.addSublayer(layerDote)

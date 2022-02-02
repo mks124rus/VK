@@ -9,14 +9,23 @@ import UIKit
 import Alamofire
 class NewsController: UIViewController, ExpandPostTextLabel{
 
-    @IBOutlet weak var newsTableView: UITableView!
+    @IBOutlet weak var newsTableView: UITableView! {
+        didSet {
+            newsTableView.rowHeight = UITableView.automaticDimension
+            newsTableView.dataSource = self
+            newsTableView.delegate = self
+            newsTableView.register(UINib(nibName: NewsCellPhoto.identifier, bundle: nil), forCellReuseIdentifier: NewsCellPhoto.identifier)
+            newsTableView.register(UINib(nibName: NewsCellText.identifier, bundle: nil), forCellReuseIdentifier: NewsCellText.identifier)
+            newsTableView.refreshControl = refreshControl
+            newsTableView.prefetchDataSource = self
+        }
+    }
     
     var nextFrom = ""
     var isLoading = false
     
     private var post:[News] = []
     private var token = NetworkManager.shared.token
-    private var newsCellPhoto = NewsCellPhoto()
     private let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd.MM.yyyy HH:mm"
@@ -35,18 +44,13 @@ class NewsController: UIViewController, ExpandPostTextLabel{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.newsTableView.rowHeight = UITableView.automaticDimension
-        self.loadData()
-        self.newsTableView.dataSource = self
-        self.newsTableView.delegate = self
-        self.newsTableView.register(UINib(nibName: "NewsCellPhoto", bundle: nil), forCellReuseIdentifier: NewsCellPhoto.identifier)
-        self.newsTableView.register(UINib(nibName: "NewsCellText", bundle: nil), forCellReuseIdentifier: NewsCellText.identifier)
-        self.newsTableView.refreshControl = refreshControl
-        self.newsTableView.prefetchDataSource = self
+
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.loadData()
     }
     
     @objc func refresh(_ sender: UIRefreshControl) {
@@ -87,6 +91,15 @@ class NewsController: UIViewController, ExpandPostTextLabel{
             return stringDate
         }
     }
+    
+    func expandedText(button: UIButton, indexPath: IndexPath) {
+        if let cell = newsTableView.cellForRow(at: indexPath) as? NewsCellPhoto{
+            newsTableView.beginUpdates()
+            cell.expandPostText()
+            newsTableView.endUpdates()
+        }
+    }
+    
 }
 
 extension NewsController: UITableViewDataSourcePrefetching{
@@ -116,21 +129,10 @@ extension NewsController: UITableViewDataSourcePrefetching{
                     self.isLoading = false
                 case .failure(let error):
                     print(error.localizedDescription)
-            }
+                }
             }
         }
     }
-    
-    func expandedText(button: UIButton, indexPath: IndexPath) {
-        if let cell = newsTableView.cellForRow(at: indexPath) as? NewsCellPhoto{
-            newsTableView.beginUpdates()
-            cell.expandPostText()
-            newsTableView.endUpdates()
-        }
-    }
-    
-
-    
     
 }
 
@@ -164,7 +166,7 @@ extension NewsController: UITableViewDataSource {
         
         if data.photoURL != nil{
             guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCellPhoto.identifier, for: indexPath) as? NewsCellPhoto else { return UITableViewCell()}
-            cell.setupCell(data: data)
+            cell.setupCell(data: data, cell: cell, indexPath: indexPath)
             cell.configShowAllTextButton(indexPath: indexPath)
             cell.delegate = self
             cell.dateLabel.text = self.getDateCellText(for: indexPath, andTimestamp: data.date)
@@ -174,7 +176,7 @@ extension NewsController: UITableViewDataSource {
             
             guard let cell = tableView.dequeueReusableCell(withIdentifier: NewsCellText.identifier, for: indexPath) as? NewsCellText else { return UITableViewCell()}
             cell.dateLabel.text = self.getDateCellText(for: indexPath, andTimestamp: data.date)
-            cell.setupCell(data: data)
+            cell.setupCell(data: data, cell: cell, indexPath: indexPath)
             return cell
         }
     }

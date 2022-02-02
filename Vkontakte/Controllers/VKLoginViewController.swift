@@ -18,8 +18,8 @@ class VKLoginViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-    var components = URLComponents()
+        
+        var components = URLComponents()
         components.scheme = "https"
         components.host = "oauth.vk.com"
         components.path = "/authorize"
@@ -36,7 +36,7 @@ class VKLoginViewController: UIViewController {
         
         let request = URLRequest(url: url)
         webView.load(request)
-
+        
     }
     
     func moveToTabBarController() {
@@ -53,10 +53,10 @@ extension VKLoginViewController: WKNavigationDelegate {
         guard let url = navigationResponse.response.url,
               url.path == "/blank.html",
               let fragment = url.fragment else {
-            decisionHandler(.allow)
-            
-            return
-        }
+                  decisionHandler(.allow)
+                  
+                  return
+              }
         print (fragment)
         
         let params = fragment
@@ -67,7 +67,7 @@ extension VKLoginViewController: WKNavigationDelegate {
                 let key = param[0]
                 let value = param[1]
                 dict[key] = value
-            
+                
                 return dict
             }
         
@@ -76,20 +76,19 @@ extension VKLoginViewController: WKNavigationDelegate {
         guard  let token = params["access_token"],
                let userIdString = params["user_id"],
                let userID = Int(userIdString) else {
-            decisionHandler(.allow)
-            return
-        }
+                   decisionHandler(.allow)
+                   return
+               }
         NetworkManager.shared.token = token
         NetworkManager.shared.userId = Int(userID)
-
+        
         decisionHandler(.cancel)
         
         if NetworkManager.shared.token != nil,
            NetworkManager.shared.userId != nil {
-            self.moveToTabBarController()
+                self.moveToTabBarController()
         }
     }
-    
     
 }
 

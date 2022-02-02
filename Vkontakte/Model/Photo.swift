@@ -9,10 +9,11 @@ import Foundation
 import SwiftyJSON
 import RealmSwift
 
-class Photo: Object {
+final class Photo: Object {
     @objc dynamic var url: String = ""
     @objc dynamic var likeCount: Int = 0
     @objc dynamic var ownerID: Int = 0
+    @objc dynamic var date: Int = 0
     
     let owner = LinkingObjects(fromType: User.self, property: "photos")
     
@@ -23,13 +24,12 @@ class Photo: Object {
     convenience init(from json: JSON ) {
         self.init()
         self.ownerID = json["owner_id"].intValue
-        self.url = json["sizes"][4]["url"].stringValue
-        if self.url == "" {
-            self.url = json["sizes"][3]["url"].stringValue
-            if self.url == ""{
-                self.url = json["sizes"][2]["url"].stringValue
-            }
-        }
+        
+        guard let sizesArray = json["sizes"].array,
+              let xSize = sizesArray.first(where: {$0["type"].stringValue == "x" }) else {return}
+
+        self.url = xSize["url"].stringValue
         self.likeCount = json["likes","count"].intValue
+        self.date = json["date"].intValue
     }
 }
