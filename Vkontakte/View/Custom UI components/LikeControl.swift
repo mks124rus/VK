@@ -17,7 +17,7 @@ class LikeControl: UIControl{
         let label = UILabel()
         label.textAlignment = .right
         label.font = .systemFont(ofSize: 14)
-        label.textColor = .systemBlue
+        label.textColor = .brandBlue
         return label
     }()
     
@@ -25,7 +25,7 @@ class LikeControl: UIControl{
         let button = UIButton()
         let buttonImage = UIImage(systemName: "heart")
         button.setImage(buttonImage, for: .normal)
-        button.tintColor = UIColor.systemBlue
+        button.tintColor = UIColor.brandBlue
         return button
     }()
     
@@ -78,11 +78,17 @@ class LikeControl: UIControl{
         addUndoLike()
     }
     
-//    override init(frame: CGRect) {
-//        super.init(frame: frame)
-//        self.heartButtonOnBar.addGestureRecognizer(tapAddLikeGesture)
-//        self.setupView()
-//    }
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        self.heartButtonOnBar.addGestureRecognizer(tapAddLikeGesture)
+        labelLikeCount.text = String(likeCount)
+        
+        self.addSubview(barBottomView)
+        self.addSubview(likeHeartCenter)
+        barBottomView.addSubview(labelLikeCount)
+        barBottomView.addSubview(heartButtonOnBar)
+    }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -138,7 +144,7 @@ class LikeControl: UIControl{
             self.likeHeartCenterAnimation()
         } else {
             likeCount = userLikeCount
-            labelLikeCount.textColor = .systemBlue
+            labelLikeCount.textColor = .brandBlue
             labelLikeCount.text = String(likeCount)
             let buttonImage = UIImage(systemName: "heart")
             heartButtonOnBar.setImage(buttonImage, for: .normal)

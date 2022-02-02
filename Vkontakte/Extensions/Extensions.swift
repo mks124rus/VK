@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension URL {
     /// check if the URL is a directory and if it is reachable
@@ -40,4 +41,9 @@ extension URL {
         return byteCount
     }
     private static let byteCountFormatter = ByteCountFormatter()
+}
+
+extension UIColor {
+    
+    static let brandBlue = UIColor(red: 53.0 / 255.0, green: 115.0 / 255.0, blue: 238.0 / 255.0, alpha: 1.0)
 }

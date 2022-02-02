@@ -79,7 +79,7 @@ class MyGroupsTableViewCell: UITableViewCell {
         self.myGroupsLogoView.frame = CGRect(origin: origin, size: size)
     }
     
-    public func setupCell(data: Group){
+    public func setupCell(data: GroupAdapter){
         self.myGroupsLogoView.image = nil
         self.groupsName.text = data.name
         //          self.setAndCacheLogo(data: data)

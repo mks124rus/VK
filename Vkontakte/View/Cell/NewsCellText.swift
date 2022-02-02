@@ -67,6 +67,27 @@ class NewsCellText: UITableViewCell {
 //        }
 //    }
     
+    public func configureCell(with viewModel: NewsViewModel, with cell: NewsCellText, with indexPath: IndexPath) {
+
+        self.nameLabel.text = viewModel.name
+        self.textPostLabel.text = viewModel.text
+        
+        cell.tag = indexPath.row
+        if cell.tag == indexPath.row {
+            if let url = viewModel.avatarURL{
+                photoService.photo(stringURL:url) { [weak self] image in
+                    DispatchQueue.main.async {
+                        self?.logoView.image = image
+                    }
+                }
+            }
+        }
+        
+        self.likeCountLabel.text = viewModel.likesCount
+        self.repostCountLabel.text = viewModel.repostsCount
+        self.commentsCountLabel.text = viewModel.commentsCount
+    }
+    
     public func setupCell(data: News, cell: NewsCellText, indexPath: IndexPath){
         cell.tag = indexPath.row
         
